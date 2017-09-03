@@ -1,0 +1,36 @@
+{
+  "name": "esvbible",
+  "version": "0.1.0",
+  "description": "Offline, mobile ESV Bible",
+  "author": "Aaron Stacy",
+  "license": "MIT",
+  "dependencies": {
+    "flow-bin": "^0.54.0",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-scripts": "1.0.13"
+  },
+  "devDependencies": {
+    "flow-watch": "^1.1.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "flow": "[ $CI = true ] && flow || flow-watch",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/esvbible/esvbible.github.io.git"
+  },
+  "keywords": [
+    "bible",
+    "esv",
+    "pwa"
+  ],
+  "bugs": {
+    "url": "https://github.com/esvbible/esvbible.github.io/issues"
+  },
+  "homepage": "https://github.com/esvbible/esvbible.github.io#readme"
+}
