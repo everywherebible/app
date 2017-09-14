@@ -1,6 +1,10 @@
 // @flow
 
-export type Next = {+type: 'next'};
-export const next = (): Next => ({type: 'next'});
+import type {Reference} from './data';
 
-export type Action = Next;
+export type SetReference = {+type: 'set-reference', +reference: Reference};
+export const setReference = (reference: Reference): SetReference =>
+  ({type: 'set-reference', reference});
+
+export type Action = SetReference;
+

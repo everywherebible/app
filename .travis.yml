@@ -5,6 +5,6 @@ cache: yarn
 env:
 - PUBLIC_URL=/
 
-script: yarn flow && yarn build && yarn test
+script: yarn typecheck && yarn build && yarn test
 
 after_success: bin/deploy
