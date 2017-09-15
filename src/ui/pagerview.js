@@ -12,7 +12,6 @@ const Page = ({style, children, index}) =>
           position: 'absolute',
           top: 0,
           left: 0,
-          backgroundColor: ['red', 'green', 'blue'][index % 3],
           width: `${window.innerWidth}px`,
           display: 'inline-block',
           ...style
@@ -22,7 +21,18 @@ const Page = ({style, children, index}) =>
 
 type Touch = {+screenX: number};
 
-type Props = {index: number, onIndexChange: (number) => typeof undefined};
+type Props = {
+  index: number,
+  onIndexChange: (number) => typeof undefined,
+  renderPage: (number) =>
+      typeof undefined
+    | null
+    | boolean
+    | number
+    | string
+    | React$Element<any>
+    | Iterable<React$Element<any>>,
+};
 
 type State = {
   touchStart?: ?Touch,
@@ -34,7 +44,15 @@ type State = {
 
 type Animatable = {animate: (any, number) => any};
 
+/** Cheesey pager view. */
 export default class PagerView extends Component<Props, State> {
+  static defaultProps = {
+    renderPage: index =>
+      <div style={{backgroundColor: ['red', 'green', 'blue'][index % 3]}}>
+        Page {index}
+      </div>
+  };
+
   onTouchStart = (event: SyntheticTouchEvent<HTMLDivElement>) => this.setState({
     touchStart: event.touches[0],
     startTime: event.timeStamp,
@@ -127,7 +145,7 @@ export default class PagerView extends Component<Props, State> {
 
   render() {
     const totalWidth = `${window.innerWidth * CHAPTER_COUNT}px`;
-    const {index} = this.props;
+    const {index, renderPage} = this.props;
     const {toAnimate} = this.state;
     const offset = toAnimate == null? this.offset() : toAnimate;
     return <div
@@ -145,15 +163,17 @@ export default class PagerView extends Component<Props, State> {
         >
       {index !== 0?
         <Page style={{transform: this.pageTranslate(-1)}} index={index - 1}>
-          page {index - 1}
+          {renderPage(index - 1)}
         </Page> :
         null}
 
-      <Page style={{transform: this.pageTranslate()}} index={index}>page {index}</Page>
+      <Page style={{transform: this.pageTranslate()}} index={index}>
+        {renderPage(index)}
+      </Page>
 
       {index < CHAPTER_COUNT - 1?
         <Page style={{transform: this.pageTranslate(1)}} index={index + 1}>
-          page {index + 1}
+          {renderPage(index + 1)}
         </Page> :
         null}
     </div>;
