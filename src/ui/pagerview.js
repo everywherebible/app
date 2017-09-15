@@ -1,9 +1,11 @@
 // @flow
 
 import React, {Component} from 'react';
-import 'web-animations-js'; // TODO: a lot of browsers don't need this
 
 import {CHAPTER_COUNT} from '../data';
+
+if (process.env.THIS_IS_JUST_A_HACK)
+  require('web-animations-js'); // TODO: a lot of browsers don't need this
 
 const Page = ({style, children, index}) =>
   <div
@@ -179,44 +181,3 @@ export default class PagerView extends Component<Props, State> {
     </div>;
   }
 }
-
-// can't get this to work properly, so we'll just go with the cheesy type def
-// above...
-// type BaseState = {index: number}
-
-// type RestingState = BaseState & {
-//   touchStart?: null,
-//   startTime?: null,
-//   touchMove?: null,
-//   moveTime?: null,
-//   toAnimate?: null,
-// };
-
-// type BaseTouchState = BaseState & {
-//   touchStart: Touch,
-//   startTime: number,
-//   toAnimate?: null
-// };
-
-// type HasNotMovedTouchState = BaseTouchState & {
-//   touchMove?: null,
-//   moveTime?: null,
-// };
-
-// type HasMovedTouchState = BaseTouchState & {
-//   touchMove: Touch,
-//   moveTime: number,
-// }
-
-// type TouchState = HasNotMovedTouchState | HasMovedTouchState;
-
-// type AnimatingState = BaseState & {
-//   touchStart?: null,
-//   startTime?: null,
-//   touchMove?: null,
-//   moveTime?: null,
-//   toAnimate: number,
-// };
-
-// type State = RestingState | TouchState | AnimatingState;
-
