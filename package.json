@@ -35,5 +35,6 @@
   "bugs": {
     "url": "https://github.com/esvbible/esvbible.github.io/issues"
   },
-  "homepage": "https://github.com/esvbible/esvbible.github.io#readme"
+  "homepage": "https://github.com/esvbible/esvbible.github.io#readme",
+  "proxy": "https://api.esv.org"
 }
