@@ -7,6 +7,7 @@ import type {State} from './reducer';
 import {chapterIndex, before, after, CHAPTER_COUNT} from './data';
 
 const BASE = new URL('http://www.esvapi.org/v2/rest/passageQuery?key=IP');
+const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
 
 export const chapterUrl = (reference: Reference): URL => {
   const url = new URL('', BASE);
@@ -21,7 +22,7 @@ export const lookup = (url: URL | Reference): Promise<Response> => {
   if (window.location.host === 'localhost:3000')
     return fetch(url.pathname + url.search);
   else
-    return fetch(url);
+    return fetch(CORS_PROXY + url.toString());
 }
 
 const fetchChapter = (store: Store, reference: Reference): Promise<string> =>
