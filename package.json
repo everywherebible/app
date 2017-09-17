@@ -20,7 +20,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "typecheck": "[ $CI = true ] && flow || flow-watch",
-    "test": "react-scripts test --env=jsdom",
+    "test": "export TEST=true && react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
   "repository": {
@@ -36,5 +36,5 @@
     "url": "https://github.com/esvbible/esvbible.github.io/issues"
   },
   "homepage": "https://github.com/esvbible/esvbible.github.io#readme",
-  "proxy": "https://api.esv.org"
+  "proxy": "http://www.esvapi.org"
 }
