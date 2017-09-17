@@ -75,6 +75,9 @@ type State = {
   startTime?: ?number,
   touchMove?: ?Touch,
   moveTime?: ?number,
+  velocity?: ?number,
+  slope?: ?number,
+  touchDirection?: ?('horizontal' | 'vertical'),
   toAnimate?: ?number,
 };
 
@@ -106,6 +109,11 @@ export default class PagerView extends Component<Props, State> {
   onTouchMove = (event: SyntheticTouchEvent<HTMLDivElement>) => this.setState({
     touchMove: event.touches[0],
     moveTime: event.timeStamp,
+    velocity: this.calculateVelocity(event.touches[0], event.timeStamp),
+    slope: this.calculateSlope(event.touches[0]),
+    touchDirection: this.state.touchDirection == null && this.state.touchMove != null?
+      (this.calculateSlope(event.touches[0]) > 1 ? 'vertical' : 'horizontal') :
+      this.state.touchDirection,
   });
 
   onTouchEnd = () => this.updateCurrentPage();
@@ -115,6 +123,31 @@ export default class PagerView extends Component<Props, State> {
   constructor() {
     super();
     this.state = {};
+  }
+
+  calculateVelocity(touch: Touch, timeStamp: number): number {
+    const {touchStart, touchMove, startTime, moveTime} = this.state;
+
+    if (touchStart == null || startTime == null)
+      throw new Error('calculateVelocity called without touchStart');
+
+    if (touchMove == null || moveTime == null)
+      return Math.abs(touch.screenX - touchStart.screenX) /
+        (timeStamp - startTime);
+
+    return Math.abs(touch.screenX - touchMove.screenX) / (timeStamp - moveTime);
+  }
+
+  calculateSlope(touch: Touch): number {
+    const {touchStart, touchMove} = this.state;
+
+    if (touchStart == null)
+      throw new Error('calculateSlope called without touchStart');
+
+    const previousTouch = touchMove == null? touchStart : touchMove;
+
+    return Math.abs((touch.screenY - previousTouch.screenY) /
+        (touch.screenX - previousTouch.screenX));
   }
 
   /** Track offset ignoring swiping or animation. */
@@ -132,7 +165,7 @@ export default class PagerView extends Component<Props, State> {
 
   /** Track offset taking swiping into account, but ignoring animation. */
   offset(): number {
-    if (this.state.touchMove == null)
+    if (this.state.touchMove == null || this.state.touchDirection !== 'horizontal')
       return this.restingOffset();
     else
       return this.restingOffset() + this.touchOffset();
@@ -140,17 +173,16 @@ export default class PagerView extends Component<Props, State> {
 
   /** True if a gesture is considered a flick. */
   isFlick(): boolean {
-    const {touchStart, startTime, touchMove, moveTime} = this.state;
+    const {touchStart, startTime, touchMove, moveTime, slope} = this.state;
 
     if (touchStart == null ||
         startTime == null ||
         touchMove == null ||
-        moveTime == null)
+        moveTime == null ||
+        slope == null)
       return false;
 
     const duration = moveTime - startTime;
-    const slope = Math.abs((touchMove.screenY - touchStart.screenY) /
-        (touchMove.screenX - touchStart.screenX));
 
     return duration < 400 && slope < 0.5;
   }
@@ -178,7 +210,12 @@ export default class PagerView extends Component<Props, State> {
 
     this.setState({
       touchStart: null,
+      startTime: null,
       touchMove: null,
+      moveTime: null,
+      slope: null,
+      velocity: null,
+      touchDirection: null,
       toAnimate: this.state.touchMove != null? this.offset() : null,
     });
   }
