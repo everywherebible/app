@@ -3,16 +3,25 @@
 import assert from 'assert';
 
 import type {Reference} from './data';
-import {chapterIndex, reference, before, after} from './data';
+import {
+  chapterIndex,
+  reference,
+  before,
+  after,
+  locationToReference,
+} from './data';
 
 const GENESIS_1: Reference = {book: 'Genesis', chapter: 1, verse: 1};
 const GENESIS_2: Reference = {book: 'Genesis', chapter: 2, verse: 1};
 const EXODUS_1: Reference = {book: 'Exodus', chapter: 1, verse: 1};
+const ONE_JOHN: Reference = {book: '1 John', chapter: 1, verse: 1};
 const THE_LAST_ONE: Reference = {book: 'Revelation', chapter: 22, verse: 1};
 const LAST_INDEX = 1188;
 
 declare function describe(name: string, callback: () => any): any;
 declare function it(name: string, callback: () => any): any;
+
+const loc = (pathname: string): Location => ({...window.location, pathname});
 
 describe('chapterIndex', () => {
   it('says genesis 1 index is 0', () => {
@@ -59,5 +68,31 @@ describe('after', () => {
 
   it('says revelation 22 is before genesis 1', () => {
     assert.deepStrictEqual(after(THE_LAST_ONE), GENESIS_1);
+  });
+});
+
+describe('locationToReference', () => {
+  it('handles "/Genesis+1"', () => {
+    assert.deepStrictEqual(locationToReference(loc('/Genesis+1')),
+        GENESIS_1);
+  });
+
+  it('handles "Genesis+1:1"', () => {
+    assert.deepStrictEqual(locationToReference(loc('/Genesis+1:1')),
+        GENESIS_1);
+  });
+
+  it('handles case', () => {
+    assert.deepStrictEqual(locationToReference(loc('/gEnEsis+1')),
+        GENESIS_1);
+  });
+
+  it('handles numbered books', () => {
+    assert.deepStrictEqual(locationToReference(loc('/1+John+1')),
+        ONE_JOHN);
+  });
+
+  it('handles no chapter', () => {
+    assert.deepStrictEqual(locationToReference(loc('/Genesis')), GENESIS_1);
   });
 });

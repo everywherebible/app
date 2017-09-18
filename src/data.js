@@ -188,11 +188,18 @@ export const locationToReference = (location: Location): Reference => {
     .replace(/\++/g, ' ')
     .replace(/^\s+/, '')
     .replace(/\s+$/, '')
-  const [book, chapterAndVerse] = referenceString.split(/\s/, 2);
-  const [chapter, verse] = chapterAndVerse.split(':');
+
+  let [bookNumber, book, chapterAndVerse] = referenceString.split(/\s/);
+  if (!/^\d+$/.test(bookNumber))
+    [book, chapterAndVerse, bookNumber] = [bookNumber, book, ''];
+
+  const [chapter, verse] = chapterAndVerse != null?
+    chapterAndVerse.split(':') : [1, 1];
 
   return {
-    book,
+    book: (bookNumber? bookNumber + ' ' : '') +
+          book[0].toUpperCase() +
+          book.slice(1).toLowerCase(),
     chapter: parseInt(chapter, 10),
     verse: verse == null? 1 : parseInt(verse, 10)
   };
