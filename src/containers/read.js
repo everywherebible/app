@@ -1,23 +1,27 @@
 // @flow
 
+import React from 'react';
 import {connect} from 'react-redux';
+import {withRouter} from 'react-router-dom';
 
-import {setReference} from '../actions';
-import type {Action} from '../actions';
-import type {Reference} from '../data';
+import {locationToReference} from '../data';
 import type {State} from '../reducer';
 import Chapters from '../ui/chapters';
 
-type StateProps = {
-  +reference: Reference,
-  +chapterCache: {[number]: string},
-};
-type DispatchProps = {+onReferenceChange: (Reference) => typeof undefined};
+type StateProps = {+chapterCache: {[number]: string}};
 
-const mapStateToProps = (state: State): StateProps =>
-  ({reference: state.reading, chapterCache: state.chapters});
+const stateToProps = (state: State): StateProps =>
+  ({chapterCache: state.chapters});
 
-const mapDispatchToProps = (dispatch: Action => any): DispatchProps =>
-  ({onReferenceChange: reference => dispatch(setReference(reference))});
+const ChaptersWithRouter = withRouter(({
+    chapterCache,
+    location,
+    history,
+  }) =>
+    <Chapters
+      reference={locationToReference(location)}
+      chapterCache={chapterCache}
+      onReferenceChange={reference =>
+        history.replace(`/${reference.book}+${reference.chapter}`)}/>);
 
-export default connect(mapStateToProps, mapDispatchToProps)(Chapters);
+export default withRouter(connect(stateToProps)(ChaptersWithRouter));

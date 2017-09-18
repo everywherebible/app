@@ -1,7 +1,9 @@
+import createHistory from 'history/createBrowserHistory';
 import React from 'react';
 import {render} from 'react-dom';
 import {createStore} from 'redux';
 
+import {locationToReference} from './data';
 import {updateStoreWithPassageText} from './fetcher';
 import reducer, {DEFAULT} from './reducer';
 import registerServiceWorker from './registerServiceWorker';
@@ -10,13 +12,13 @@ import './ui/index.css';
 import './ui/normalize.css';
 
 const store = createStore(reducer, DEFAULT);
+const history = createHistory();
 
-store.subscribe(() => updateStoreWithPassageText(store, store.getState()));
+history.listen((location, action) =>
+  updateStoreWithPassageText(store, locationToReference(location)));
 
-render(<App store={store}/>, document.getElementById('root'));
+render(<App store={store} history={history}/>, document.getElementById('root'));
 
-updateStoreWithPassageText(store, store.getState());
+updateStoreWithPassageText(store, locationToReference(window.location));
 
 registerServiceWorker();
-
-window.store = store;

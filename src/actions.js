@@ -17,5 +17,5 @@ export const setChapterText =
   (reference: Reference, text: string): SetChapterText =>
     ({type: 'set-chapter-text', reference, text});
 
-export type Action = SetReference | SetChapterText;
+export type Action = SetChapterText;
 

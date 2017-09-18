@@ -181,3 +181,20 @@ export const before = (ref: Reference): Reference => {
 
 export const after = (ref: Reference): Reference =>
   reference((chapterIndex(ref) + 1) % CHAPTER_COUNT);
+
+export const locationToReference = (location: Location): Reference => {
+  const referenceString = location.pathname
+    .slice(1)
+    .replace(/\++/g, ' ')
+    .replace(/^\s+/, '')
+    .replace(/\s+$/, '')
+  const [book, chapterAndVerse] = referenceString.split(/\s/, 2);
+  const [chapter, verse] = chapterAndVerse.split(':');
+
+  return {
+    book,
+    chapter: parseInt(chapter, 10),
+    verse: verse == null? 1 : parseInt(verse, 10)
+  };
+};
+

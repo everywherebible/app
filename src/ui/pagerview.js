@@ -111,9 +111,11 @@ export default class PagerView extends Component<Props, State> {
     moveTime: event.timeStamp,
     velocity: this.calculateVelocity(event.touches[0], event.timeStamp),
     slope: this.calculateSlope(event.touches[0]),
-    touchDirection: this.state.touchDirection == null && this.state.touchMove != null?
-      (this.calculateSlope(event.touches[0]) > 1 ? 'vertical' : 'horizontal') :
-      this.state.touchDirection,
+    touchDirection:
+      this.state.touchDirection == null && this.state.touchMove != null?
+        (this.calculateSlope(event.touches[0]) > 1?
+           'vertical' : 'horizontal') :
+        this.state.touchDirection,
   });
 
   onTouchEnd = () => this.updateCurrentPage();

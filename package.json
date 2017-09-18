@@ -6,6 +6,7 @@
   "license": "MIT",
   "dependencies": {
     "flow-bin": "^0.54.0",
+    "history": "^4.7.2",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-redux": "^5.0.6",

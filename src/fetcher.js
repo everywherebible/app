@@ -33,15 +33,16 @@ const fetchChapter = (store: Store, reference: Reference): Promise<string> =>
 const indexIsCached = (state: State, index: number): boolean =>
   state.chapters[index] != null;
 
-export const updateStoreWithPassageText = (store: Store, state: State) => {
-  const index = chapterIndex(state.reading);
+export const updateStoreWithPassageText = (store: Store, reference: Reference) => {
+  const state = store.getState();
+  const index = chapterIndex(reference);
 
   if (!indexIsCached(state, index))
-    fetchChapter(store, state.reading);
+    fetchChapter(store, reference);
 
   if (index > 0 && !indexIsCached(state, index - 1))
-    fetchChapter(store, before(state.reading));
+    fetchChapter(store, before(reference));
 
   if (index < CHAPTER_COUNT && !indexIsCached(state, index + 1))
-    fetchChapter(store, after(state.reading));
+    fetchChapter(store, after(reference));
 }
