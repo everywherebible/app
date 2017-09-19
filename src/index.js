@@ -6,7 +6,7 @@ import {createStore} from 'redux';
 import {locationToReference} from './data';
 import {updateStoreWithPassageText} from './fetcher';
 import reducer, {DEFAULT} from './reducer';
-import registerServiceWorker from './registerServiceWorker';
+import registerServiceWorker from './register-service-worker';
 import App from './ui/app';
 import './ui/index.css';
 import './ui/normalize.css';
