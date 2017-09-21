@@ -81,12 +81,14 @@ module.exports = function(proxy, allowedHost) {
     setup(app) {
       // This lets us open files from the runtime error overlay.
       app.use(errorOverlayMiddleware());
-      // This service worker file is effectively a 'no-op' that will reset any
-      // previous service worker registered for the same host:port combination.
-      // We do this in development to avoid hitting the production cache if
-      // it used the same host and port.
-      // https://github.com/facebookincubator/create-react-app/issues/2272#issuecomment-302832432
-      app.use(noopServiceWorkerMiddleware());
+
+      // Serve the service worker at the root like it will be in production so
+      // that it can intercept any fetch requests.
+      app.use((req, res, next) => {
+        if (/service-worker.js$/.test(req.url))
+          req.url = '/static/js/service-worker.js';
+        next();
+      });
     },
   };
 };

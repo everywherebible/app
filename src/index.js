@@ -10,6 +10,7 @@ import registerServiceWorker from './register-service-worker';
 import App from './ui/app';
 import './ui/index.css';
 import './ui/normalize.css';
+import db from './db'; window.db = db; //TODO: remove
 
 const store = createStore(reducer, DEFAULT);
 const history = createHistory();
@@ -22,3 +23,5 @@ render(<App store={store} history={history}/>, document.getElementById('root'));
 updateStoreWithPassageText(store, locationToReference(window.location));
 
 registerServiceWorker();
+
+
