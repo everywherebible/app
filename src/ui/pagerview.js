@@ -4,7 +4,7 @@ import React, {Component} from 'react';
 
 import {CHAPTER_COUNT} from '../data';
 
-if (!process.env.TEST)
+if (process.env.NODE_ENV !== 'test')
   require('web-animations-js'); // TODO: a lot of browsers don't need this
 
 type Children =

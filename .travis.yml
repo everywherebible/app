@@ -2,9 +2,6 @@ language: node_js
 node_js: ["node"]
 cache: yarn
 
-env:
-- PUBLIC_URL=/
-
 script: yarn typecheck && yarn build && yarn test
 
 after_success: bin/deploy
