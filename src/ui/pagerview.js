@@ -106,17 +106,23 @@ export default class PagerView extends Component<Props, State> {
     startTime: event.timeStamp,
   });
 
-  onTouchMove = (event: SyntheticTouchEvent<HTMLDivElement>) => this.setState({
-    touchMove: event.touches[0],
-    moveTime: event.timeStamp,
-    velocity: this.calculateVelocity(event.touches[0], event.timeStamp),
-    slope: this.calculateSlope(event.touches[0]),
-    touchDirection:
-      this.state.touchDirection == null && this.state.touchMove != null?
-        (this.calculateSlope(event.touches[0]) > 1?
-           'vertical' : 'horizontal') :
-        this.state.touchDirection,
-  });
+  onTouchMove = (event: SyntheticTouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    const velocity = this.calculateVelocity(touch, event.timeStamp);
+    const slope = this.calculateSlope(touch);
+
+    let direction = this.state.touchDirection;
+    if (direction == null && this.state.touchMove == null)
+      direction = slope > 1? 'vertical' : 'horizontal';
+
+    this.setState({
+      touchMove: touch,
+      moveTime: event.timeStamp,
+      velocity,
+      slope,
+      touchDirection: direction,
+    });
+  };
 
   onTouchEnd = () => this.updateCurrentPage();
 
@@ -175,18 +181,12 @@ export default class PagerView extends Component<Props, State> {
 
   /** True if a gesture is considered a flick. */
   isFlick(): boolean {
-    const {touchStart, startTime, touchMove, moveTime, slope} = this.state;
+    const {touchStart, slope, velocity} = this.state;
 
-    if (touchStart == null ||
-        startTime == null ||
-        touchMove == null ||
-        moveTime == null ||
-        slope == null)
+    if (touchStart == null || slope == null || velocity == null)
       return false;
 
-    const duration = moveTime - startTime;
-
-    return duration < 400 && slope < 0.5;
+    return velocity > 1.5 && slope < 0.5;
   }
 
   newIndex(): number {
@@ -226,7 +226,7 @@ export default class PagerView extends Component<Props, State> {
     if (prevState.toAnimate == null && this.state.toAnimate != null) {
       const from = `translateX(${this.state.toAnimate}px)`;
       const to = `translateX(${this.offset()}px)`;
-      const duration = 200; // TODO: determine this based on velocity
+      const duration = 70; // TODO: determine this based on velocity
       if (this.track)
         this.track.animate([{transform: from}, {transform: to}], duration);
       this.setState({toAnimate: null});
