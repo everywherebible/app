@@ -181,12 +181,18 @@ export default class PagerView extends Component<Props, State> {
 
   /** True if a gesture is considered a flick. */
   isFlick(): boolean {
-    const {touchStart, slope, velocity} = this.state;
+    const {touchStart, startTime, moveTime, slope, velocity} = this.state;
 
-    if (touchStart == null || slope == null || velocity == null)
+    if (touchStart == null ||
+        startTime == null ||
+        moveTime == null ||
+        slope == null ||
+        velocity == null)
       return false;
 
-    return velocity > 1.5 && slope < 0.5;
+    const duration = moveTime - startTime;
+
+    return slope < 0.5 && (velocity > 1.5 || duration < 400);
   }
 
   newIndex(): number {
