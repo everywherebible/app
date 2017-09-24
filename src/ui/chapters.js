@@ -1,6 +1,8 @@
 import React from 'react';
 
+import './chapters.css';
 import {chapterIndex, reference as referenceFromIndex} from '../data';
+import {NAV_HEIGHT} from '../ui/nav';
 import PagerView from '../ui/pagerview';
 
 const Chapter = ({reference, text}) =>
@@ -12,7 +14,14 @@ const Chapter = ({reference, text}) =>
         Loading {reference.book} {reference.chapter}
       </div>
     </div> :
-    <div dangerouslySetInnerHTML={{__html: text}}/>;
+    <div
+      style={{
+        marginBottom: NAV_HEIGHT,
+        padding: '0 1rem 1rem 1rem',
+        textAlign: 'justify',
+        lineHeight: '1.4em',
+      }}
+      dangerouslySetInnerHTML={{__html: text}}/>;
 
 export default ({reference, chapterCache, onReferenceChange}) =>
   <PagerView

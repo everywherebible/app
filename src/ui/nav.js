@@ -3,6 +3,8 @@ import {NavLink} from 'react-router-dom';
 
 import Book from '../img/book';
 
+export const NAV_HEIGHT = '2.5rem';
+
 export default () =>
   <nav style={{
       display: 'flex',
@@ -13,7 +15,7 @@ export default () =>
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: 'black',
-      height: '3rem',
+      height: NAV_HEIGHT,
     }}>
     <NavLink to="/">
       <Book style={{transform: 'scale(1.35)'}}/>

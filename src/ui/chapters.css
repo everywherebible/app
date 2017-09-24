@@ -1,0 +1,20 @@
+.footnotes {
+  font-size: 0.7rem;
+  line-height: 1rem;
+}
+
+.chapter-num {
+  display: none;
+}
+
+.verse-num, .footnote {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+  top: -0.5em;
+}
+
+.footnote a, .footnote, .footnotes, .verse-num {
+  color: #6b6843;
+}
