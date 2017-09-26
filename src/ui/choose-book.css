@@ -1,0 +1,11 @@
+.find-input {
+  width: 90%;
+  border: 1px solid #6b684352;
+  border-radius: 1em;
+  padding: 0.4em;
+}
+
+.find-input::-webkit-input-placeholder  { font-style: italic; }
+.find-input:-moz-placeholder            { font-style: italic; }
+.find-input::-moz-placeholder           { font-style: italic; }
+.find-input:-ms-input-placeholder       { font-style: italic; }

@@ -1,0 +1,10 @@
+nav a  svg {
+  transition-property: transform, opacity;
+  transition-duration: .2s;
+  opacity: 0.8;
+}
+
+nav a.active svg {
+  transform: scale(1.3);
+  opacity: 1;
+}

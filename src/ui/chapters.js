@@ -10,7 +10,11 @@ const Chapter = withRouter(({reference, text, history}) =>
   text == null?
     <div
         className="fit"
-        style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
       <div>
         Loading {reference.book} {reference.chapter}
       </div>
@@ -22,7 +26,9 @@ const Chapter = withRouter(({reference, text, history}) =>
         textAlign: 'justify',
         lineHeight: '1.4em',
       }}
+
       dangerouslySetInnerHTML={{__html: text}}
+
       onClick={event => {
         const href = event.target.href;
 

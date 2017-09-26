@@ -2,8 +2,12 @@ import React from 'react';
 import {NavLink} from 'react-router-dom';
 
 import Book from '../img/book';
+import Search from '../img/search';
+import './nav.css';
 
 export const NAV_HEIGHT = '2.5rem';
+
+export const READ_PATH_RE = /^\/((?!lookup.*$).+$)/;
 
 export default () =>
   <nav style={{
@@ -12,12 +16,17 @@ export default () =>
       right: 0,
       bottom: 0,
       left: 0,
-      justifyContent: 'center',
+      justifyContent: 'space-around',
       alignItems: 'center',
       backgroundColor: 'black',
       height: NAV_HEIGHT,
+      padding: '0 2rem',
     }}>
-    <NavLink to="/">
-      <Book style={{transform: 'scale(1.35)'}}/>
+    <NavLink to="/"
+        isActive={(match, location) => READ_PATH_RE.exec(location.pathname)}>
+      <Book/>
+    </NavLink>
+    <NavLink to="/lookup">
+      <Search/>
     </NavLink>
   </nav>

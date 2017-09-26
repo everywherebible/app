@@ -8,19 +8,21 @@ import {updateStoreWithPassageText} from './fetcher';
 import reducer, {DEFAULT} from './reducer';
 import registerServiceWorker from './register-service-worker';
 import App from './ui/app';
+import {READ_PATH_RE} from './ui/nav';
 import './ui/index.css';
 import './ui/normalize.css';
-import db from './db'; window.db = db; //TODO: remove
 
 const store = createStore(reducer, DEFAULT);
 const history = createHistory();
 
 history.listen((location, action) =>
-  updateStoreWithPassageText(store, locationToReference(location)));
+  READ_PATH_RE.exec(location.pathname)?
+    updateStoreWithPassageText(store, locationToReference(location)) : null);
 
 render(<App store={store} history={history}/>, document.getElementById('root'));
 
-updateStoreWithPassageText(store, locationToReference(window.location));
+if (READ_PATH_RE.exec(window.location.pathname))
+  updateStoreWithPassageText(store, locationToReference(window.location));
 
 registerServiceWorker();
 
