@@ -29,15 +29,24 @@ class Page extends Component<PageProps> {
 
   root = null;
 
+  rootHeight = null;
+
   componentDidUpdate(prevProps) {
+    if (this.root == null)
+      return;
+
     const {index, pageScrollDepths} = this.props;
 
-    if (this.root != null && prevProps.index !== index) {
+    if (this.root != null &&
+        (prevProps.index !== index ||
+         this.root.scrollHeight > this.rootHeight)) {
       let scrollDepth = pageScrollDepths[index];
       if (scrollDepth == null)
         scrollDepth = 0;
       this.root.scrollTo(0, scrollDepth);
     }
+
+    this.rootHeight = this.root.scrollHeight;
   }
 
   render() {
@@ -68,6 +77,8 @@ type Props = {
   index: number,
   onIndexChange: (number) => typeof undefined,
   renderPage: (number) => Children,
+  onScroll: Event => any,
+  getInitialScroll: () => number,
 };
 
 type State = {
@@ -89,7 +100,9 @@ export default class PagerView extends Component<Props, State> {
     renderPage: index =>
       <div style={{backgroundColor: ['red', 'green', 'blue'][index % 3]}}>
         Page {index}
-      </div>
+      </div>,
+    onScroll: () => null,
+    getInitialScroll: () => 0,
   };
 
   // seems more performant to keep this out of state/props?
@@ -99,6 +112,7 @@ export default class PagerView extends Component<Props, State> {
     if (!(event.currentTarget instanceof HTMLElement))
       return;
     this.pageScrollDepths[this.props.index] = event.currentTarget.scrollTop;
+    this.props.onScroll(event);
   }
 
   onTouchStart = (event: SyntheticTouchEvent<HTMLDivElement>) => this.setState({
@@ -214,7 +228,9 @@ export default class PagerView extends Component<Props, State> {
   }
 
   updateCurrentPage() {
-    this.props.onIndexChange(this.newIndex());
+    const index = this.newIndex();
+    if (index !== this.props.index)
+      this.props.onIndexChange(index);
 
     this.setState({
       touchStart: null,
@@ -226,6 +242,11 @@ export default class PagerView extends Component<Props, State> {
       touchDirection: null,
       toAnimate: this.state.touchMove != null? this.offset() : null,
     });
+  }
+
+  componentDidMount() {
+    this.pageScrollDepths[this.props.index] =
+      this.props.getInitialScroll();
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
