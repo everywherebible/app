@@ -1,12 +1,32 @@
+// @flow
+
 import React from 'react';
 import {Route} from 'react-router-dom';
+import {connect} from 'react-redux';
 
+import {addRecent} from '../actions';
+import type {Action} from '../actions';
+import type {Reference} from '../data';
+import {populateStoreWithRecents} from '../recent-reference-tracker';
+import type {State} from '../reducer';
 import ChooseBook from '../ui/choose-book';
 import ChooseChapter from '../ui/choose-chapter';
 
-export default ({match: {path}}) =>
+const mapStateToProps = ({recents}: State) => ({recents});
+
+const mapDispatchToProps = (dispatch: Action => any) =>
+  ({
+    addRecent: (reference: Reference) => dispatch(addRecent(reference)),
+    populateStoreWithRecents: () => populateStoreWithRecents(dispatch),
+  });
+
+type Props = {match: {path: string}};
+
+export default ({match: {path}}: Props) =>
   <div className="fit">
-    <Route exact path={`${path}`}       component={ChooseBook}/>
-    <Route exact path={`${path}/:book`} component={ChooseChapter}/>
+    <Route exact path={`${path}`}
+      component={connect(mapStateToProps, mapDispatchToProps)(ChooseBook)}/>
+    <Route exact path={`${path}/:book`}
+      component={connect(mapStateToProps, mapDispatchToProps)(ChooseChapter)}/>
   </div>;
 

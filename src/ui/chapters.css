@@ -23,3 +23,7 @@ h3 {
   text-align: left;
   font-size: 1em;
 }
+
+.esv-text p {
+  text-align: justify;
+}

@@ -34,7 +34,6 @@ const Chapter = ({reference, text}) =>
       style={{
         marginBottom: NAV_HEIGHT,
         padding: '0 1rem 1rem 1rem',
-        textAlign: 'justify',
         lineHeight: '1.4em',
       }}
 

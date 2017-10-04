@@ -2,11 +2,6 @@
 
 import type {Reference} from './data';
 
-export type SetReference = {+type: 'set-reference', +reference: Reference};
-
-export const setReference = (reference: Reference): SetReference =>
-  ({type: 'set-reference', reference});
-
 export type SetChapterText = {
   +type: 'set-chapter-text',
   +reference: Reference,
@@ -17,5 +12,21 @@ export const setChapterText =
   (reference: Reference, text: string): SetChapterText =>
     ({type: 'set-chapter-text', reference, text});
 
-export type Action = SetChapterText;
+export type AddRecent = {
+  +type: 'add-recent',
+  +reference: Reference,
+}
+
+export const addRecent = (reference: Reference): AddRecent =>
+  ({type: 'add-recent', reference});
+
+export type SetRecents = {
+  +type: 'set-recents',
+  +recents: Array<Reference>,
+}
+
+export const setRecents = (recents: Array<Reference>): SetRecents =>
+  ({type: 'set-recents', recents});
+
+export type Action = SetChapterText | AddRecent | SetRecents;
 

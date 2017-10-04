@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 
 import {chapterCounts} from '../data';
 
-export default ({match: {params: {book}}}) =>
+export default ({match: {params: {book}}, addRecent}) =>
   <div
       className="fit"
       style={{
@@ -17,6 +17,7 @@ export default ({match: {params: {book}}}) =>
       <Link
           key={i}
           to={`/${book}+${i + 1}`}
+          onClick={event => addRecent({book, chapter: i + 1, verse: 1})}
           style={{
             width: '2rem',
             padding: '1rem',

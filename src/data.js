@@ -208,3 +208,8 @@ export const locationToReference = (location: Location): Reference =>
     .replace(/^\s+/, '')
     .replace(/\s+$/, ''));
 
+export const referenceToLocation = ({book, chapter}: Reference): string =>
+  `/${book}+${chapter}`;
+
+export const isEqual = (a: Reference, b: Reference): boolean =>
+  a.book === b.book && a.chapter === b.chapter && a.verse === b.verse;

@@ -1,19 +1,27 @@
 /** thanks jake https://github.com/jakearchibald/idb-keyval */
 
-var keyValStore;
+const stores = {};
 
 export const DB_NAME = 'esv';
-export const STORE_NAME = 'chapters';
+export const STORE_NAMES = ['chapters', 'recents'];
 
 export class KeyValStore {
+  constructor(db = DB_NAME, store = STORE_NAMES[0]) {
+    this._db_name = db;
+    this._store_name = store;
+  }
+
   db() {
     if (this._db == null)
       this._db = new Promise((resolve, reject) => {
-        const request = indexedDB.open(DB_NAME, 1);
+        const request = indexedDB.open(this._db_name, 2);
         request.onerror = () => reject(request.error);
         // TODO: actually handle upgrade
         request.onupgradeneeded = () => {
-          request.result.createObjectStore(STORE_NAME);
+          STORE_NAMES.forEach(name => {
+            try { request.result.deleteObjectStore(name) } catch (ignore) {}
+            request.result.createObjectStore(name);
+          });
         }
         request.onsuccess = () => {
           resolve(request.result);
@@ -24,10 +32,10 @@ export class KeyValStore {
 
   transact(type, callback) {
     return this.db().then(db => new Promise((resolve, reject) => {
-      const transaction = db.transaction(STORE_NAME, type);
+      const transaction = db.transaction(this._store_name, type);
       transaction.oncomplete = resolve;
       transaction.onerror = () => reject(transaction.error);
-      callback(transaction.objectStore(STORE_NAME));
+      callback(transaction.objectStore(this._store_name));
     }))
   }
 
@@ -60,5 +68,9 @@ export class KeyValStore {
   }
 }
 
-export default () => keyValStore == null?
-  keyValStore = new KeyValStore() : keyValStore;
+export default ({db = DB_NAME, store = STORE_NAMES[0]} = {}) => {
+  const key = db + '|' + store;
+  if (stores[key] == null)
+    stores[key] = new KeyValStore(db, store);
+  return stores[key];
+};
