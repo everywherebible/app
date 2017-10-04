@@ -1,8 +1,9 @@
 // @flow
 
 import React from 'react';
-import {Route} from 'react-router-dom';
 import {connect} from 'react-redux';
+import type {Match} from 'react-router';
+import {Route} from 'react-router-dom';
 
 import {addRecent} from '../actions';
 import type {Action} from '../actions';
@@ -20,7 +21,7 @@ const mapDispatchToProps = (dispatch: Action => any) =>
     populateStoreWithRecents: () => populateStoreWithRecents(dispatch),
   });
 
-type Props = {match: {path: string}};
+type Props = {match: Match};
 
 export default ({match: {path}}: Props) =>
   <div className="fit">
