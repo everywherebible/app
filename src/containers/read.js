@@ -8,7 +8,11 @@ import debounce from 'lodash.debounce';
 
 import {enableFocusMode} from '../actions';
 import type {Action} from '../actions';
-import {locationToReference} from '../data';
+import {
+  locationToReference,
+  referenceToLocation,
+  referenceToVerseNumId,
+} from '../data';
 import type {State} from '../reducer';
 import Chapters from '../ui/chapters';
 
@@ -25,8 +29,10 @@ type DispatchProps = {+setFocusModeEnabled: boolean => any};
 const dispatchToProps = (dispatch: Action => any): DispatchProps =>
   ({setFocusModeEnabled: enabled => dispatch(enableFocusMode(enabled))});
 
-const onScroll = debounce((history, location, el) =>
-    history.replace(`${location.pathname}?s=${el.scrollTop}`), 400);
+const onScroll = debounce((history, location, el) => {
+  const path = referenceToLocation(locationToReference(location));
+  return history.replace(`${path}?s=${el.scrollTop}`)
+}, 400);
 
 const getInitialScroll = () => {
   const url = new URL(window.location);
@@ -36,7 +42,18 @@ const getInitialScroll = () => {
 
   const scroll = parseInt(url.searchParams.get('s'), 10);
 
-  return Number.isNaN(scroll)? 0 : scroll;
+  if (!Number.isNaN(scroll))
+    return scroll;
+
+  const reference = locationToReference(window.location);
+
+  if (reference.verse !== 1)
+    return root => {
+      const el = root.querySelector('#' + referenceToVerseNumId(reference));
+      return el? el.offsetTop : 0;
+    };
+  else
+    return 0;
 };
 
 const ChaptersWithRouter = withRouter(({

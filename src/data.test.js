@@ -14,6 +14,11 @@ import {
 const GENESIS_1: Reference = {book: 'Genesis', chapter: 1, verse: 1};
 const GENESIS_2: Reference = {book: 'Genesis', chapter: 2, verse: 1};
 const EXODUS_1: Reference = {book: 'Exodus', chapter: 1, verse: 1};
+const TWO_THESS_3_4: Reference = {
+  book: '2 Thessalonians',
+  chapter: 3,
+  verse: 4,
+};
 const ONE_JOHN: Reference = {book: '1 John', chapter: 1, verse: 1};
 const THE_LAST_ONE: Reference = {book: 'Revelation', chapter: 22, verse: 1};
 const LAST_INDEX = 1188;
@@ -80,6 +85,16 @@ describe('locationToReference', () => {
   it('handles "Genesis+1:1"', () => {
     assert.deepStrictEqual(locationToReference(loc('/Genesis+1:1')),
         GENESIS_1);
+  });
+
+  it('handles "/2+Thessalonians+3:4"', () => {
+    assert.deepStrictEqual(locationToReference(loc('/2+Thessalonians+3:4')),
+        TWO_THESS_3_4);
+  });
+
+  it('handles "/2%20thessalonians+3:4"', () => {
+    assert.deepStrictEqual(locationToReference(loc('/2%20thessalonians+3:4')),
+        TWO_THESS_3_4);
   });
 
   it('handles case', () => {

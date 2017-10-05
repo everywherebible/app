@@ -145,9 +145,9 @@ type Book = $Keys<typeof chapterCounts>;
 export const books: Array<Book> = Object.getOwnPropertyNames(chaptersBefore);
 
 export type Reference = {
-  +book: string,
+  +book: Book,
   +chapter: number,
-  +verse?: number
+  +verse: number
 }
 
 export type Chapter = {
@@ -186,6 +186,7 @@ export const after = (ref: Reference): Reference =>
 
 export const stringToReference = (referenceString: string): Reference => {
   let [bookNumber, book, chapterAndVerse] = referenceString.split(/\s/);
+
   if (!/^\d+$/.test(bookNumber))
     [book, chapterAndVerse, bookNumber] = [bookNumber, book, ''];
 
@@ -193,16 +194,16 @@ export const stringToReference = (referenceString: string): Reference => {
     chapterAndVerse.split(':') : [1, 1];
 
   return {
-    book: (bookNumber? bookNumber + ' ' : '') +
+    book: (((bookNumber? bookNumber + ' ' : '') +
           book[0].toUpperCase() +
-          book.slice(1).toLowerCase(),
+          book.slice(1).toLowerCase()): any),
     chapter: parseInt(chapter, 10),
     verse: verse == null? 1 : parseInt(verse, 10)
   };
 }
 
 export const locationToReference = (location: Location): Reference =>
-  stringToReference(location.pathname
+  stringToReference(decodeURI(location.pathname)
     .slice(1)
     .replace(/\++/g, ' ')
     .replace(/^\s+/, '')
@@ -213,3 +214,22 @@ export const referenceToLocation = ({book, chapter}: Reference): string =>
 
 export const isEqual = (a: Reference, b: Reference): boolean =>
   a.book === b.book && a.chapter === b.chapter && a.verse === b.verse;
+
+/** Convert a Reference to the element ID the ESV API puts in their markup.
+ *
+ * The v2 ESV API marks up the verses with:
+ *
+ *     <span class=verse-num id=vBBCCCVVV-X>VVV</span>
+ *
+ * Where BB is the book number, CCC is the chapter number, and VVV is the verse
+ * number. These numbers are all 0-padded and start at one, so Genesis 1:1
+ * would be v01001001-1.
+ */
+export const referenceToVerseNumId = (r: Reference): string => {
+  const bookIdx = books.indexOf(r.book) + 1;
+  const book = bookIdx.toLocaleString('en', {minimumIntegerDigits: 2});
+  const chapter = r.chapter.toLocaleString('en', {minimumIntegerDigits: 3});
+  const verse = r.verse.toLocaleString('en', {minimumIntegerDigits: 3});
+
+  return `v${book}${chapter}${verse}-1`;
+};

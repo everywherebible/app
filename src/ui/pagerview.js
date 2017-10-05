@@ -41,8 +41,13 @@ class Page extends Component<PageProps> {
         (prevProps.index !== index ||
          this.root.scrollHeight > this.rootHeight)) {
       let scrollDepth = pageScrollDepths[index];
-      if (scrollDepth == null)
+
+      if (scrollDepth instanceof Function) {
+        scrollDepth = pageScrollDepths[index] = scrollDepth(this.root);
+      } else if (scrollDepth == null) {
         scrollDepth = 0;
+      }
+
       this.root.scrollTo(0, scrollDepth);
     }
 
@@ -78,7 +83,7 @@ type Props = {
   onIndexChange: (number) => typeof undefined,
   renderPage: (number) => Children,
   onScroll: Event => any,
-  getInitialScroll: () => number,
+  getInitialScroll: () => (number | HTMLElement => number),
 };
 
 type State = {
