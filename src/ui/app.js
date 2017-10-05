@@ -7,7 +7,7 @@ import type Store from 'redux';
 
 import Read from '../containers/read';
 import Lookup from '../containers/lookup';
-import Nav from '../ui/nav';
+import Nav from '../containers/nav';
 
 type Props = {store: Store, history: any};
 

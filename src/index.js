@@ -3,6 +3,7 @@ import React from 'react';
 import {render} from 'react-dom';
 import {createStore} from 'redux';
 
+import {enableFocusMode} from './actions';
 import {locationToReference} from './data';
 import {updateStoreWithPassageText} from './fetcher';
 import recentReferenceTracker from './recent-reference-tracker';
@@ -18,7 +19,8 @@ const history = createHistory();
 
 history.listen((location, action) =>
   READ_PATH_RE.exec(location.pathname)?
-    updateStoreWithPassageText(store, locationToReference(location)) : null);
+    updateStoreWithPassageText(store, locationToReference(location)) :
+    store.dispatch(enableFocusMode(false)));
 
 render(<App store={store} history={history}/>, document.getElementById('root'));
 

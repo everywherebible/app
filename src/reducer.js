@@ -9,11 +9,13 @@ const RECENT_COUNT = 10;
 export type State = {
   +chapters: {[number]: string},
   +recents: Array<Reference>,
+  +enableFocusMode: boolean,
 }
 
 export const DEFAULT = {
   chapters: {},
   recents: [],
+  enableFocusMode: false,
 };
 
 const updatedRecents =
@@ -45,6 +47,8 @@ export default (state: State = DEFAULT, action: Action) => {
       };
     case 'set-recents':
       return {...state, recents: action.recents};
+    case 'enable-focus-mode':
+      return {...state, enableFocusMode: action.enabled};
     default:
       (action: empty); // eslint-disable-line
       return state;

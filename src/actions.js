@@ -28,5 +28,13 @@ export type SetRecents = {
 export const setRecents = (recents: Array<Reference>): SetRecents =>
   ({type: 'set-recents', recents});
 
-export type Action = SetChapterText | AddRecent | SetRecents;
+export type EnableFocusMode = {
+  +type: 'enable-focus-mode',
+  +enabled: boolean,
+};
+
+export const enableFocusMode = (enabled: boolean): EnableFocusMode =>
+  ({type: 'enable-focus-mode', enabled});
+
+export type Action = SetChapterText | AddRecent | SetRecents | EnableFocusMode;
 

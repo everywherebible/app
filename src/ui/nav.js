@@ -9,7 +9,7 @@ export const NAV_HEIGHT = '2.5rem';
 
 export const READ_PATH_RE = /^\/((?!lookup.*$).+$)/;
 
-export default () =>
+export default ({style, className}) =>
   <nav style={{
       display: 'flex',
       position: 'fixed',
@@ -21,6 +21,7 @@ export default () =>
       backgroundColor: 'black',
       height: NAV_HEIGHT,
       padding: '0 2rem',
+      ...style,
     }}>
     <NavLink to="/"
         isActive={(match, location) => READ_PATH_RE.exec(location.pathname)}>

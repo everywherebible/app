@@ -19,7 +19,7 @@ const handleFootnoteClicks = event => {
   }
 };
 
-const Chapter = ({reference, text}) =>
+const Chapter = ({reference, text, onClick}) =>
   text == null?
     <div
         className="fit"
@@ -39,7 +39,12 @@ const Chapter = ({reference, text}) =>
 
       dangerouslySetInnerHTML={{__html: text}}
 
-      onClick={handleFootnoteClicks}
+      onClick={event => {
+        handleFootnoteClicks(event);
+
+        if (!event.defaultPrevented && onClick)
+          onClick(event);
+      }}
       />;
 
 export default ({
@@ -48,14 +53,16 @@ export default ({
       onReferenceChange,
       onScroll,
       getInitialScroll,
+      onClick
     }) =>
   <PagerView
     index={chapterIndex(reference)}
     onIndexChange={index => onReferenceChange(referenceFromIndex(index))}
+    onScroll={onScroll || (() => null)}
+    getInitialScroll={getInitialScroll || (() => null)}
     renderPage={index =>
       <Chapter
         reference={referenceFromIndex(index)}
-        text={chapterCache[index]}/>}
-        onScroll={onScroll || (() => null)}
-        getInitialScroll={getInitialScroll || (() => null)}/>;
+        onClick={onClick}
+        text={chapterCache[index]}/>}/>;
 

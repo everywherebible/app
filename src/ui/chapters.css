@@ -27,3 +27,7 @@ h3 {
 .esv-text p {
   text-align: justify;
 }
+
+object {
+  display: none;
+}
