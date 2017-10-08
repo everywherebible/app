@@ -3,11 +3,12 @@ import {NavLink} from 'react-router-dom';
 
 import Book from '../img/book';
 import Search from '../img/search';
+import Settings from '../img/settings';
 import './nav.css';
 
 export const NAV_HEIGHT = '2.5rem';
 
-export const READ_PATH_RE = /^\/((?!lookup.*$).+$)/;
+export const READ_PATH_RE = /^\/((?!(lookup.*$)|(settings.*$)).+$)/;
 
 export default ({style, className}) =>
   <nav style={{
@@ -29,5 +30,8 @@ export default ({style, className}) =>
     </NavLink>
     <NavLink to="/lookup">
       <Search/>
+    </NavLink>
+    <NavLink to="/settings">
+      <Settings/>
     </NavLink>
   </nav>

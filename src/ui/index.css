@@ -10,3 +10,16 @@ html {
   font-family: Georgia, serif;
   font-size: 22px;
 }
+
+.night-mode {
+  color: white;
+  background-color: black;
+}
+
+a, a:visited {
+  color: black;
+}
+
+.night-mode a, .night-mode a:visited {
+  color: white;
+}

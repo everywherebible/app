@@ -57,7 +57,6 @@ const LookupLink = ({to, text, i, onClick}) =>
         display: 'block',
         textAlign: 'left',
         textDecoration: 'none',
-        color: 'black',
         padding: '1rem',
         borderTop: `${i === 0? 0 : 1}px solid #555`,
       }}>

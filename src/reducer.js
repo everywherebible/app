@@ -10,12 +10,14 @@ export type State = {
   +chapters: {[number]: string},
   +recents: Array<Reference>,
   +enableFocusMode: boolean,
+  +enableNightMode: boolean,
 }
 
 export const DEFAULT = {
   chapters: {},
   recents: [],
   enableFocusMode: false,
+  enableNightMode: false,
 };
 
 const updatedRecents =
@@ -49,6 +51,8 @@ export default (state: State = DEFAULT, action: Action) => {
       return {...state, recents: action.recents};
     case 'enable-focus-mode':
       return {...state, enableFocusMode: action.enabled};
+    case 'enable-night-mode':
+      return {...state, enableNightMode: action.enabled};
     default:
       (action: empty); // eslint-disable-line
       return state;

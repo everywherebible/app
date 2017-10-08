@@ -24,7 +24,6 @@ export default ({match: {params: {book}}, addRecent}) =>
               width: '2rem',
               padding: '1rem',
               textDecoration: 'none',
-              color: 'black',
             }}>
           {i + 1}
         </Link>)}

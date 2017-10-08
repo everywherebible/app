@@ -36,5 +36,18 @@ export type EnableFocusMode = {
 export const enableFocusMode = (enabled: boolean): EnableFocusMode =>
   ({type: 'enable-focus-mode', enabled});
 
-export type Action = SetChapterText | AddRecent | SetRecents | EnableFocusMode;
+export type EnableNightMode = {
+  +type: 'enable-night-mode',
+  +enabled: boolean,
+};
+
+export const enableNightMode = (enabled: boolean): EnableNightMode =>
+  ({type: 'enable-night-mode', enabled});
+
+export type Action =
+    SetChapterText
+  | AddRecent
+  | SetRecents
+  | EnableFocusMode
+  | EnableNightMode;
 
