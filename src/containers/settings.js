@@ -9,7 +9,7 @@ import Settings from '../ui/settings';
 
 type StateProps = {+enableNightMode: boolean};
 
-const stateToProps = ({enableNightMode}: State): StateProps =>
+const stateToProps = ({preferences: {enableNightMode}}: State): StateProps =>
   ({enableNightMode});
 
 type DispatchProps = {+setNightModeEnabled: boolean => any};

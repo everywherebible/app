@@ -8,7 +8,8 @@ import type {State} from '../reducer';
 
 type Props = {+enableNightMode: boolean, children?: any};
 
-const stateToProps = ({enableNightMode}: State): Props => ({enableNightMode});
+const stateToProps = ({preferences: {enableNightMode}}: State): Props =>
+  ({enableNightMode});
 
 const Main = ({enableNightMode, children}: Props): React$Element<any> =>
   <main className={`fit ${enableNightMode? 'night-mode' : ''}`}>

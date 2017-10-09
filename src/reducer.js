@@ -1,6 +1,6 @@
 // @flow
 
-import type {Action} from './actions';
+import type {Action, Preferences} from './actions';
 import type {Reference} from './data/model';
 import {chapterIndex, isEqual} from './data/model';
 
@@ -9,15 +9,16 @@ const RECENT_COUNT = 10;
 export type State = {
   +chapters: {[number]: string},
   +recents: Array<Reference>,
-  +enableFocusMode: boolean,
-  +enableNightMode: boolean,
+  +preferences: Preferences,
 }
 
 export const DEFAULT = {
   chapters: {},
   recents: [],
-  enableFocusMode: false,
-  enableNightMode: false,
+  preferences: {
+    enableFocusMode: false,
+    enableNightMode: false,
+  }
 };
 
 const updatedRecents =
@@ -50,9 +51,20 @@ export default (state: State = DEFAULT, action: Action) => {
     case 'set-recents':
       return {...state, recents: action.recents};
     case 'enable-focus-mode':
-      return {...state, enableFocusMode: action.enabled};
+      return {
+        ...state,
+        preferences: {...state.preferences, enableFocusMode: action.enabled},
+      };
     case 'enable-night-mode':
-      return {...state, enableNightMode: action.enabled};
+      return {
+        ...state,
+        preferences: {...state.preferences, enableNightMode: action.enabled},
+      };
+    case 'set-preferences':
+      return {
+        ...state,
+        preferences: {...state.preferences, ...action.preferences},
+      };
     default:
       (action: empty); // eslint-disable-line
       return state;

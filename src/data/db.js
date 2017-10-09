@@ -3,7 +3,7 @@
 const stores = {};
 
 export const DB_NAME = 'esv';
-export const STORE_NAMES = ['chapters', 'recents'];
+export const STORE_NAMES = ['chapters', 'recents', 'preferences'];
 
 export class KeyValStore {
   constructor(db = DB_NAME, store = STORE_NAMES[0]) {
@@ -14,7 +14,7 @@ export class KeyValStore {
   db() {
     if (this._db == null)
       this._db = new Promise((resolve, reject) => {
-        const request = indexedDB.open(this._db_name, 2);
+        const request = indexedDB.open(this._db_name, 3);
         request.onerror = () => reject(request.error);
         // TODO: actually handle upgrade
         request.onupgradeneeded = () => {
@@ -55,16 +55,17 @@ export class KeyValStore {
   }
 
   all() {
-    const values = [];
+    const entries = [];
     return this.transact('readonly', store => {
-        const cursor = (store.openKeyCursor || store.openCursor).call(store);
-        cursor.onsuccess = () => {
-          if (!cursor.result) return;
-          values.push(cursor.result.value);
-          cursor.result.continue();
+        const request = store.openCursor();
+        request.onsuccess = event => {
+          const cursor = event.target.result;
+          if (!cursor) return;
+          entries.push({key: cursor.key, value: cursor.value});
+          cursor.continue();
         };
       })
-      .then(() => values);
+      .then(() => entries);
   }
 }
 

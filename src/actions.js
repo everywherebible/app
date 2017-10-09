@@ -28,6 +28,16 @@ export type SetRecents = {
 export const setRecents = (recents: Array<Reference>): SetRecents =>
   ({type: 'set-recents', recents});
 
+export type Preferences = {
+  +enableFocusMode: boolean,
+  +enableNightMode: boolean,
+};
+
+export type SettablePreferences = {
+  +enableFocusMode?: boolean,
+  +enableNightMode?: boolean,
+};
+
 export type EnableFocusMode = {
   +type: 'enable-focus-mode',
   +enabled: boolean,
@@ -44,10 +54,20 @@ export type EnableNightMode = {
 export const enableNightMode = (enabled: boolean): EnableNightMode =>
   ({type: 'enable-night-mode', enabled});
 
+export type SetPreferences = {
+  +type: 'set-preferences',
+  +preferences: SettablePreferences,
+};
+
+export const setPreferences = (preferences: Preferences):
+    SetPreferences =>
+  ({type: 'set-preferences', preferences});
+
 export type Action =
     SetChapterText
   | AddRecent
   | SetRecents
   | EnableFocusMode
-  | EnableNightMode;
+  | EnableNightMode
+  | SetPreferences;
 

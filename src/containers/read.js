@@ -21,8 +21,9 @@ type StateProps = {
   +enableFocusMode: boolean,
 };
 
-const stateToProps = (state: State): StateProps =>
-  ({chapterCache: state.chapters, enableFocusMode: state.enableFocusMode});
+const stateToProps = ({chapters, preferences: {enableFocusMode}}: State):
+    StateProps =>
+  ({chapterCache: chapters, enableFocusMode: enableFocusMode});
 
 type DispatchProps = {+setFocusModeEnabled: boolean => any};
 

@@ -13,9 +13,16 @@ export const populateStoreWithRecents = (dispatch: Action => any) =>
 
 export default (store: Store) => {
   const recents = db({store: 'recents'});
+  let last;
 
-  store.subscribe((state = store.getState()) =>
-    recents.set('passages', state.recents.map(chapterIndex)));
+  store.subscribe((state = store.getState()) => {
+    if (state.recents === last) return;
+    // TODO: every time we navigate to the passage lookup, these will be
+    // updated from the DB, leading to a bunch of spurious db writes. should
+    // have a semantic equality check here.
+    recents.set('passages', state.recents.map(chapterIndex));
+    last = state.recents;
+  });
 
   populateStoreWithRecents(store.dispatch);
 };
