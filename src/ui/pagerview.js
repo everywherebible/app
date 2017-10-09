@@ -2,7 +2,7 @@
 
 import React, {Component} from 'react';
 
-import {CHAPTER_COUNT} from '../data';
+import {CHAPTER_COUNT} from '../data/model';
 
 if (process.env.NODE_ENV !== 'test')
   require('web-animations-js'); // TODO: a lot of browsers don't need this

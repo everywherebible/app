@@ -4,15 +4,15 @@ import {render} from 'react-dom';
 import {createStore} from 'redux';
 
 import {enableFocusMode} from './actions';
-import {locationToReference} from './data';
-import {updateStoreWithPassageText} from './fetcher';
-import recentReferenceTracker from './recent-reference-tracker';
+import {locationToReference} from './data/model';
+import {updateStoreWithPassageText} from './data/fetcher';
+import recentReferenceTracker from './data/recent-reference-tracker';
 import reducer, {DEFAULT} from './reducer';
-import registerServiceWorker from './register-service-worker';
+import registerServiceWorker from './service-worker/register';
 import App from './ui/app';
 import {READ_PATH_RE} from './ui/nav';
-import './ui/index.css';
 import './ui/normalize.css';
+import './ui/index.css';
 
 const store = createStore(reducer, DEFAULT);
 const history = createHistory();

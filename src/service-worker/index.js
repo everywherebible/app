@@ -8,8 +8,8 @@
  */
 /* eslint-disable no-restricted-globals */
 
-import store from './db';
-import {stringToReference, chapterIndex} from './data';
+import store from '../data/db';
+import {stringToReference, chapterIndex} from '../data/model';
 
 const isPassageLookup = (url: URL): boolean =>
   /^\/v2\/rest\/passageQuery/.test(url.pathname);

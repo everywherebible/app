@@ -2,14 +2,14 @@
 
 import assert from 'assert';
 
-import type {Reference} from './data';
+import type {Reference} from './model';
 import {
   chapterIndex,
   reference,
   before,
   after,
   locationToReference,
-} from './data';
+} from './model';
 
 const GENESIS_1: Reference = {book: 'Genesis', chapter: 1, verse: 1};
 const GENESIS_2: Reference = {book: 'Genesis', chapter: 2, verse: 1};

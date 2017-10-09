@@ -2,9 +2,9 @@
 
 import type {Store} from 'react-redux';
 
-import {setRecents} from './actions';
-import type {Action} from './actions';
-import {chapterIndex, reference} from './data';
+import {setRecents} from '../actions';
+import type {Action} from '../actions';
+import {chapterIndex, reference} from './model';
 import db from './db';
 
 export const populateStoreWithRecents = (dispatch: Action => any) =>

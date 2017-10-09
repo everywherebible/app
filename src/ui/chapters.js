@@ -1,9 +1,9 @@
 import React from 'react';
 
 import './chapters.css';
-import {chapterIndex, reference as referenceFromIndex} from '../data';
-import {NAV_HEIGHT} from '../ui/nav';
-import PagerView from '../ui/pagerview';
+import {chapterIndex, reference as referenceFromIndex} from '../data/model';
+import {NAV_HEIGHT} from './nav';
+import PagerView from './pagerview';
 
 const handleFootnoteClicks = event => {
   const href = event.target.href;

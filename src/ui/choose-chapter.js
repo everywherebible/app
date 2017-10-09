@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 
-import {chapterCounts} from '../data';
+import {chapterCounts} from '../data/model';
 import {NAV_HEIGHT} from './nav';
 
 export default ({match: {params: {book}}, addRecent}) =>

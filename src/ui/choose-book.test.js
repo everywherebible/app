@@ -1,7 +1,7 @@
 import assert from 'assert';
 
 import {results} from './choose-book';
-import {books} from '../data';
+import {books} from '../data/model';
 
 const MARK_1 = {book: 'Mark', chapter: 1, verse: 1};
 const ONE_TIMOTHY_3 = {book: '1 Timothy', chapter: 3, verse: 1};

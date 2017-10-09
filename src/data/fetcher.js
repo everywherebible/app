@@ -1,10 +1,10 @@
 // @flow
 import type {Store} from 'redux';
 
-import {setChapterText} from './actions';
-import type {Reference} from './data';
-import type {State} from './reducer';
-import {chapterIndex, before, after, CHAPTER_COUNT} from './data';
+import {setChapterText} from '../actions';
+import type {Reference} from './model';
+import {chapterIndex, before, after, CHAPTER_COUNT} from './model';
+import type {State} from '../reducer';
 
 const BASE = new URL('http://www.esvapi.org/v2/rest/passageQuery?key=IP');
 const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';

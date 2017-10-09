@@ -12,7 +12,7 @@ import {
   locationToReference,
   referenceToLocation,
   referenceToVerseNumId,
-} from '../data';
+} from '../data/model';
 import type {State} from '../reducer';
 import Chapters from '../ui/chapters';
 

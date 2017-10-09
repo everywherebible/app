@@ -1,8 +1,8 @@
 // @flow
 
 import type {Action} from './actions';
-import type {Reference} from './data';
-import {chapterIndex, isEqual} from './data';
+import type {Reference} from './data/model';
+import {chapterIndex, isEqual} from './data/model';
 
 const RECENT_COUNT = 10;
 

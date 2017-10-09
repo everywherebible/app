@@ -7,8 +7,8 @@ import {Route} from 'react-router-dom';
 
 import {addRecent} from '../actions';
 import type {Action} from '../actions';
-import type {Reference} from '../data';
-import {populateStoreWithRecents} from '../recent-reference-tracker';
+import type {Reference} from '../data/model';
+import {populateStoreWithRecents} from '../data/recent-reference-tracker';
 import type {State} from '../reducer';
 import ChooseBook from '../ui/choose-book';
 import ChooseChapter from '../ui/choose-chapter';

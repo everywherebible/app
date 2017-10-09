@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 
-import {books, referenceToLocation} from '../data';
+import {books, referenceToLocation} from '../data/model';
 import './choose-book.css';
 
 let _tokens;

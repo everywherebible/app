@@ -1,6 +1,6 @@
 // @flow
 
-import type {Reference} from './data';
+import type {Reference} from './data/model';
 
 export type SetChapterText = {
   +type: 'set-chapter-text',
