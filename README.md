@@ -27,6 +27,19 @@ You can also optionally start the type checker and unit tests (in separate termi
 
 Push to the `dev` branch and wait for [the Travis build](https://travis-ci.org/esvbible/esvbible.github.io) to run.
 
+# Small print
+
+## License
+
+Source code [licensed under the MIT
+License](/esvbible/esvbible.github.io/blob/dev/LICENSE).
+
 ## Credits
+
+Scripture quotations are from the ESV® Bible (The Holy Bible, English Standard
+Version®), copyright © 2001 by Crossway, a publishing ministry of Good News
+Publishers. Used by permission. All rights reserved. You may not copy or
+download more than 500 consecutive verses of the ESV Bible or more than one
+half of any book of the ESV Bible.
 
 Search icon made by <a href="https://www.flaticon.com/authors/lucy-g" title="Lucy G">Lucy G</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>

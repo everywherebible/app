@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from 'react-router-dom';
 
 import type {StateProps, DispatchProps} from '../containers/settings';
 
@@ -15,8 +16,7 @@ export default ({enableNightMode, setNightModeEnabled}: Props):
           display: 'block',
           lineHeight: ROW_HEIGHT,
           marginLeft: GUTTER,
-        }}
-        >
+        }}>
       <span>Night Mode</span>
       <input
           style={{
@@ -24,10 +24,18 @@ export default ({enableNightMode, setNightModeEnabled}: Props):
             height: ROW_HEIGHT,
             margin: '0 '  + GUTTER,
           }}
-          type="checkbox"
+          type='checkbox'
           checked={enableNightMode}
-          onChange={event => setNightModeEnabled(!enableNightMode)}
-          />
+          onChange={event => setNightModeEnabled(!enableNightMode)}/>
     </label>
+    <Link
+        to='/about'
+        style={{
+          lineHeight: ROW_HEIGHT,
+          marginLeft: GUTTER,
+          textDecoration: 'none',
+        }}>
+      About
+    </Link>
   </div>;
 

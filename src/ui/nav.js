@@ -8,7 +8,7 @@ import './nav.css';
 
 export const NAV_HEIGHT = '2.5rem';
 
-export const READ_PATH_RE = /^\/((?!(lookup.*$)|(settings.*$)).+$)/;
+export const READ_PATH_RE = /^\/((?!(lookup.*$)|(settings.*$)|(about.*$)).+$)/;
 
 export default ({style, className}) =>
   <nav style={{

@@ -5,6 +5,7 @@ import {Provider} from 'react-redux';
 import {Router, Route, Redirect, Switch} from 'react-router-dom';
 import type Store from 'redux';
 
+import About from './about';
 import Lookup from '../containers/lookup';
 import Main from '../containers/main';
 import Nav from '../containers/nav';
@@ -24,6 +25,7 @@ export default ({store, history}: Props) =>
           <Switch>
             <Route path='/lookup'         component={Lookup}/>
             <Route path='/settings'       component={Settings}/>
+            <Route path='/about'          component={About}/>
             <Route path='/:passage' exact component={Read}/>
             <Route path='/'         exact component={RedirectToGenesis1}/>
           </Switch>
