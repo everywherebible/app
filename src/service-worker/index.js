@@ -25,6 +25,9 @@ const toDb = (response: Response): Promise<any> =>
       const reference = stringToReference(passage);
       const index = chapterIndex(reference);
 
+      if (Number.isNaN(index))
+        return;
+
       if (process.env.NODE_ENV === 'development')
         console.log(`storing ${url.toString()} (${passage})
                      with reference ${JSON.stringify(reference)}

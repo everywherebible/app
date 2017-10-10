@@ -9,12 +9,14 @@ import debounce from 'lodash.debounce';
 import {enableFocusMode} from '../actions';
 import type {Action} from '../actions';
 import {
+  chapterCounts,
   locationToReference,
   referenceToLocation,
   referenceToVerseNumId,
 } from '../data/model';
 import type {State} from '../reducer';
 import Chapters from '../ui/chapters';
+import ThatsNotInTheBible from '../ui/thats-not-in-the-bible';
 
 type StateProps = {
   +chapterCache: {[number]: string},
@@ -63,15 +65,20 @@ const ChaptersWithRouter = withRouter(({
     history,
     setFocusModeEnabled,
     enableFocusMode,
-  } : StateProps & DispatchProps & ContextRouter) =>
-    <Chapters
-      reference={locationToReference(location)}
-      chapterCache={chapterCache}
-      onReferenceChange={reference =>
-        history.replace(`/${reference.book}+${reference.chapter}`)}
-      onScroll={event => onScroll(history, location, event.currentTarget)}
-      onClick={event => setFocusModeEnabled(!enableFocusMode)}
-      getInitialScroll={getInitialScroll}/>);
+  } : StateProps & DispatchProps & ContextRouter) => {
+    const reference = locationToReference(location);
+    if (chapterCounts[reference.book])
+      return <Chapters
+        reference={reference}
+        chapterCache={chapterCache}
+        onReferenceChange={reference =>
+          history.replace(`/${reference.book}+${reference.chapter}`)}
+        onScroll={event => onScroll(history, location, event.currentTarget)}
+        onClick={event => setFocusModeEnabled(!enableFocusMode)}
+        getInitialScroll={getInitialScroll}/>
+    else
+      return <ThatsNotInTheBible/>;
+});
 
 export default withRouter(
     connect(stateToProps, dispatchToProps)(ChaptersWithRouter));
