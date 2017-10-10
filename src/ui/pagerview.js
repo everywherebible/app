@@ -4,8 +4,10 @@ import React, {Component} from 'react';
 
 import {CHAPTER_COUNT} from '../data/model';
 
-if (process.env.NODE_ENV !== 'test')
-  require('web-animations-js'); // TODO: a lot of browsers don't need this
+const animations =
+  process.env.NODE_ENV !== 'test' && Element.prototype.animate != null?
+    import('web-animations-js') :
+    Promise.resolve();
 
 type Children =
       typeof undefined
@@ -259,8 +261,9 @@ export default class PagerView extends Component<Props, State> {
       const from = `translateX(${this.state.toAnimate}px)`;
       const to = `translateX(${this.offset()}px)`;
       const duration = 70; // TODO: determine this based on velocity
-      if (this.track)
-        this.track.animate([{transform: from}, {transform: to}], duration);
+      animations.then(() =>
+        this.track &&
+        this.track.animate([{transform: from}, {transform: to}], duration));
       this.setState({toAnimate: null});
     }
   }
