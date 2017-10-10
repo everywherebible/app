@@ -22,6 +22,7 @@ echo deploying...
 msg="dev@`git log --pretty=oneline -n 1 --abbrev-commit`"
 
 cp esvbible-deploy-key.enc /tmp
+cp 404.html build/
 
 git fetch origin master
 git checkout FETCH_HEAD
