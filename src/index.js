@@ -18,6 +18,11 @@ import './ui/index.css';
 const store = createStore(reducer, DEFAULT);
 const history = createHistory();
 
+if (sessionStorage.redirect) {
+  history.replace(sessionStorage.redirect);
+  delete sessionStorage.redirect;
+}
+
 history.listen((location, action) =>
   READ_PATH_RE.exec(location.pathname)?
     updateStoreWithPassageText(store, locationToReference(location)) :
