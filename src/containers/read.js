@@ -11,7 +11,7 @@ import type {Action} from '../actions';
 import {
   chapterCounts,
   locationToReference,
-  referenceToLocation,
+  chapterToLocation,
   referenceToVerseNumId,
 } from '../data/model';
 import type {State} from '../reducer';
@@ -33,7 +33,7 @@ const dispatchToProps = (dispatch: Action => any): DispatchProps =>
   ({setFocusModeEnabled: enabled => dispatch(enableFocusMode(enabled))});
 
 const onScroll = debounce((history, location, el) => {
-  const path = referenceToLocation(locationToReference(location));
+  const path = chapterToLocation(locationToReference(location));
   return history.replace(`${path}?s=${el.scrollTop}`)
 }, 400);
 

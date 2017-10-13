@@ -209,8 +209,11 @@ export const locationToReference = (location: Location): Reference =>
     .replace(/^\s+/, '')
     .replace(/\s+$/, ''));
 
-export const referenceToLocation = ({book, chapter}: Reference): string =>
+export const chapterToLocation = ({book, chapter}: Reference): string =>
   `/${book}+${chapter}`;
+
+export const referenceToLocation = (reference: Reference): string =>
+  `/${reference.book}+${reference.chapter}:${reference.verse}`;
 
 export const isEqual = (a: Reference, b: Reference): boolean =>
   a.book === b.book && a.chapter === b.chapter && a.verse === b.verse;
@@ -224,6 +227,8 @@ export const isEqual = (a: Reference, b: Reference): boolean =>
  * Where BB is the book number, CCC is the chapter number, and VVV is the verse
  * number. These numbers are all 0-padded and start at one, so Genesis 1:1
  * would be v01001001-1.
+ *
+ * This is the inverse of verseNumIdToReference.
  */
 export const referenceToVerseNumId = (r: Reference): string => {
   const bookIdx = books.indexOf(r.book) + 1;
@@ -233,3 +238,32 @@ export const referenceToVerseNumId = (r: Reference): string => {
 
   return `v${book}${chapter}${verse}-1`;
 };
+
+/** Convert an element ID the ESV API puts in their markup to a reference.
+ *
+ * The v2 ESV API marks up the verses with:
+ *
+ *     <span class=verse-num id=vBBCCCVVV-X>VVV</span>
+ *
+ * Where BB is the book number, CCC is the chapter number, and VVV is the verse
+ * number. These numbers are all 0-padded and start at one, so Genesis 1:1
+ * would be v01001001-1.
+ *
+ * This is the inverse of referenceToVerseNumId.
+ */
+export const verseNumIdToReference = (id: string): Reference => {
+  const parsed = id.match(/^v(\d\d)(\d\d\d)(\d\d\d)/);
+
+  if (parsed == null)
+    throw new Error(`cannot convert ${id} to reference`);
+
+  const [, book, chapter, verse] = parsed;
+
+  return {
+    book: books[parseInt(book, 10) - 1],
+    chapter: parseInt(chapter, 10),
+    verse: parseInt(verse, 10),
+  };
+};
+
+

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 
-import {books, referenceToLocation} from '../data/model';
+import {books, chapterToLocation} from '../data/model';
 import './choose-book.css';
 
 let _tokens;
@@ -69,7 +69,7 @@ export default class ChooseBook extends Component {
   item = (object, i) =>
     object.book != null && object.chapter != null && object.verse != null?
       <LookupLink
-        to={referenceToLocation(object)}
+        to={chapterToLocation(object)}
         text={`${object.book} ${object.chapter}`}
         key={i}
         i={i}
