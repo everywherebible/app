@@ -11,8 +11,12 @@
 import store from '../data/db';
 import {stringToReference, chapterIndex} from '../data/model';
 
-const isPassageLookup = (url: URL): boolean =>
-  /^\/v2\/rest\/passageQuery/.test(url.pathname);
+const isPassageLookup = (url: URL): boolean => {
+  if (process.env.NODE_ENV !== 'development')
+    url = new URL(url.pathname.substring(1));
+
+  return /^\/v2\/rest\/passageQuery/.test(url.pathname);
+}
 
 const fromDb = (url: URL): Promise<string> =>
   store().get(chapterIndex(stringToReference(url.searchParams.get('passage'))));
