@@ -28,16 +28,12 @@ const tokens = () => {
 export const results = (query, recents) => {
   if (query) {
     const q = query.toLowerCase();
-    const recentBooks = new Set(recents.map(r => r.book));
     const matchingBooks = Array.from(tokens().entries())
       .filter(([k, v]) => k.startsWith(q))
       .reduce((matching, [k, v]) => [...matching, ...v], []);
     const matchingRecents = recents.filter(r => matchingBooks.includes(r.book));
 
-    return [
-      ...matchingRecents,
-      ...matchingBooks.filter(book => !recentBooks.has(book))
-    ];
+    return [...matchingRecents, ...matchingBooks];
   } else {
     if (recents.length)
       if (recents.length < 10)

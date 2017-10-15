@@ -29,14 +29,14 @@ describe('choose-book', () => {
 
     it('sorts recent matches above others', () => {
       const actual = results('ma', [MARK_1]);
-      const expected = [MARK_1, 'Malachi', 'Matthew'];
+      const expected = [MARK_1, 'Malachi', 'Matthew', 'Mark'];
       assert.deepStrictEqual(actual, expected);
     });
 
     it('correctly tokenizes numbered books', () => {
       const actual = results('jo', [ONE_JOHN_2]);
       const expected = [ONE_JOHN_2, 'Joshua', 'Job', 'Joel', 'Jonah', 'John',
-          '2 John', '3 John'];
+          '1 John', '2 John', '3 John'];
       assert.deepStrictEqual(actual, expected);
     });
   });
