@@ -34,8 +34,15 @@ export default ({enableNightMode, setNightModeEnabled}: Props):
           lineHeight: ROW_HEIGHT,
           marginLeft: GUTTER,
           textDecoration: 'none',
+          display: 'block',
         }}>
       About
+      <span
+          style={{
+            float: 'right',
+            height: ROW_HEIGHT,
+            margin: '0 ' + GUTTER,
+          }}>&#10140;</span>
     </Link>
   </div>;
 

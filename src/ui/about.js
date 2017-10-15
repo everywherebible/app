@@ -11,7 +11,7 @@ export default () =>
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        margin: '1rem',
+        margin: '0 1rem',
       }}>
     <div style={{marginTop: '-3rem', textAlign: 'justify'}}>
       <h3 style={{textAlign: 'center'}}>{pkg.description}</h3>
