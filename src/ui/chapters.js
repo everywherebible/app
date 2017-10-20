@@ -25,44 +25,10 @@ const handleFootnoteClicks = event => {
   }
 };
 
-const isToTheRightOf = (event, el) => {
-  const rect = el.getBoundingClientRect();
-
-  return event.clientY >= rect.top && event.clientY <= rect.bottom &&
-    event.clientX >= rect.left;
-};
-
-const isAheadOf = (event, el) => {
-  const rect = el.getBoundingClientRect();
-
-  return (event.clientY >= rect.top && event.clientX >= rect.left) ||
-    event.clientY > rect.bottom;
-}
-
 const getClickedReference = event => {
-  if (event.target.classList.contains('verse-num'))
+  if (event.target.classList.contains('verse-num') ||
+      event.target.classList.contains('verse'))
     return verseNumIdToReference(event.target.id);
-
-  const verseNums = event.target.querySelectorAll('.verse-num');
-
-  if (verseNums.length === 0)
-    return null;
-
-  for (let i = 0; i < verseNums.length; i++) {
-    const verseNum = verseNums[i];
-    if (isToTheRightOf(event, verseNum))
-      return verseNumIdToReference(verseNum.id);
-    if (!isAheadOf(event, verseNum))
-      if (i > 0)
-        return verseNumIdToReference(verseNums[i - 1].id);
-      else
-        return {
-          ...verseNumIdToReference(verseNum.id),
-          verse: 1,
-        };
-  }
-
-  return verseNumIdToReference(verseNums[verseNums.length - 1].id);
 }
 
 class Chapter extends Component {

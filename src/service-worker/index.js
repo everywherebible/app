@@ -10,6 +10,7 @@
 
 import store from '../data/db';
 import {stringToReference, chapterIndex} from '../data/model';
+import transform from '../data/transform';
 
 const isPassageLookup = (url: URL): boolean => {
   if (process.env.NODE_ENV !== 'development')
@@ -21,33 +22,33 @@ const isPassageLookup = (url: URL): boolean => {
 const fromDb = (url: URL): Promise<string> =>
   store().get(chapterIndex(stringToReference(url.searchParams.get('passage'))));
 
-const toDb = (response: Response): Promise<any> =>
-  response.text()
-    .then(text => {
-      const url = new URL(response.url);
-      const passage = url.searchParams.get('passage');
-      const reference = stringToReference(passage);
-      const index = chapterIndex(reference);
+const toDb = (url: URL, text: string) => {
+  const passage = url.searchParams.get('passage');
+  const reference = stringToReference(passage);
+  const index = chapterIndex(reference);
 
-      if (Number.isNaN(index))
-        return;
+  if (Number.isNaN(index))
+    return;
 
-      if (process.env.NODE_ENV === 'development')
-        console.log(`storing ${url.toString()} (${passage})
-                     with reference ${JSON.stringify(reference)}
-                     as ${index}`);
+  if (process.env.NODE_ENV === 'development')
+    console.log(`storing ${url.toString()} (${passage})
+                 with reference ${JSON.stringify(reference)}
+                 as ${index}`);
 
-      store().set(index, text);
-    });
+  store().set(index, text);
+};
 
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   if (isPassageLookup(url))
     event.respondWith(fromDb(url)
       .then(text => new Response(text, {status: 200}))
-      .catch(error => {
-        const fromNetwork = fetch(event.request);
-        fromNetwork.then(response => response.clone()).then(toDb);
-        return fromNetwork;
-      }));
+      .catch(error =>
+        fetch(event.request)
+          .then(response => response.text())
+          .then(transform)
+          .then(text => {
+            toDb(new URL(event.request.url), text)
+            return new Response(text, {status: 200});
+          })));
 });

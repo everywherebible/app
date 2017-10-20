@@ -249,10 +249,14 @@ export const referenceToVerseNumId = (r: Reference): string => {
  * number. These numbers are all 0-padded and start at one, so Genesis 1:1
  * would be v01001001-1.
  *
+ * This has also been updated to handle the markup pre-processing I do that
+ * wraps the entire verse in a span that starts with "vt", so something like
+ * "vt01001001-1".
+ *
  * This is the inverse of referenceToVerseNumId.
  */
 export const verseNumIdToReference = (id: string): Reference => {
-  const parsed = id.match(/^v(\d\d)(\d\d\d)(\d\d\d)/);
+  const parsed = id.match(/^vt?(\d\d)(\d\d\d)(\d\d\d)/);
 
   if (parsed == null)
     throw new Error(`cannot convert ${id} to reference`);
