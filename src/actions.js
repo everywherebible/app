@@ -63,11 +63,18 @@ export const setPreferences = (preferences: Preferences):
     SetPreferences =>
   ({type: 'set-preferences', preferences});
 
+export type AddToast = {
+  +type: 'add-toast',
+  +text: string,
+};
+
+export const addToast = (text: string): AddToast => ({type: 'add-toast', text});
+
 export type Action =
     SetChapterText
   | AddRecent
   | SetRecents
   | EnableFocusMode
   | EnableNightMode
-  | SetPreferences;
-
+  | SetPreferences
+  | AddToast;

@@ -6,7 +6,7 @@ import type {ContextRouter} from 'react-router';
 import {withRouter} from 'react-router-dom';
 import debounce from 'lodash.debounce';
 
-import {enableFocusMode} from '../actions';
+import {enableFocusMode, addToast} from '../actions';
 import type {Action} from '../actions';
 import {
   chapterCounts,
@@ -25,12 +25,18 @@ type StateProps = {
 
 const stateToProps = ({chapters, preferences: {enableFocusMode}}: State):
     StateProps =>
-  ({chapterCache: chapters, enableFocusMode: enableFocusMode});
+  ({chapterCache: chapters, enableFocusMode});
 
-type DispatchProps = {+setFocusModeEnabled: boolean => any};
+type DispatchProps = {
+  +setFocusModeEnabled: boolean => any,
+  +toast: string => any,
+};
 
 const dispatchToProps = (dispatch: Action => any): DispatchProps =>
-  ({setFocusModeEnabled: enabled => dispatch(enableFocusMode(enabled))});
+  ({
+    setFocusModeEnabled: enabled => dispatch(enableFocusMode(enabled)),
+    toast: text => dispatch(addToast(text)),
+  });
 
 const onScroll = debounce((history, location, el) => {
   const path = chapterToLocation(locationToReference(location));
@@ -65,6 +71,7 @@ const ChaptersWithRouter = withRouter(({
     history,
     setFocusModeEnabled,
     enableFocusMode,
+    toast,
   } : StateProps & DispatchProps & ContextRouter) => {
     const reference = locationToReference(location);
     if (chapterCounts[reference.book])
@@ -75,7 +82,8 @@ const ChaptersWithRouter = withRouter(({
           history.replace(`/${reference.book}+${reference.chapter}`)}
         onScroll={event => onScroll(history, location, event.currentTarget)}
         onClick={event => setFocusModeEnabled(!enableFocusMode)}
-        getInitialScroll={getInitialScroll}/>
+        getInitialScroll={getInitialScroll}
+        toast={toast}/>
     else
       return <ThatsNotInTheBible/>;
 });

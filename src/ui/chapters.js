@@ -46,12 +46,17 @@ class Chapter extends Component {
     if (this.lastClick != null && Date.now() - this.lastClick < 200) {
       const reference = getClickedReference(event);
 
-      if (reference != null)
+      if (reference != null) {
+        const {book, chapter, verse} = reference;
+
         copyToClipboard(
             new URL(
                 referenceToLocation(reference),
                 window.location)
               .toString());
+
+        this.props.toast(`Copied link to ${book} ${chapter}:${verse}`);
+      }
     }
 
     this.lastClick = Date.now();
@@ -89,7 +94,8 @@ export default ({
       onReferenceChange,
       onScroll,
       getInitialScroll,
-      onClick
+      onClick,
+      toast,
     }) =>
   <PagerView
     index={chapterIndex(reference)}
@@ -100,5 +106,6 @@ export default ({
       <Chapter
         reference={referenceFromIndex(index)}
         onClick={onClick}
-        text={chapterCache[index]}/>}/>;
+        text={chapterCache[index]}
+        toast={toast}/>}/>;
 

@@ -6,10 +6,13 @@ import {chapterIndex, isEqual} from './data/model';
 
 const RECENT_COUNT = 10;
 
+export type Toast = {start: number, text: string}; // TODO: find a better home
+
 export type State = {
   +chapters: {[number]: string},
   +recents: Array<Reference>,
   +preferences: Preferences,
+  +toasts: Array<Toast>,
 }
 
 export const DEFAULT = {
@@ -18,7 +21,8 @@ export const DEFAULT = {
   preferences: {
     enableFocusMode: false,
     enableNightMode: false,
-  }
+  },
+  toasts: [],
 };
 
 const updatedRecents =
@@ -64,6 +68,14 @@ export default (state: State = DEFAULT, action: Action) => {
       return {
         ...state,
         preferences: {...state.preferences, ...action.preferences},
+      };
+    case 'add-toast':
+      return {
+        ...state,
+        toasts: [
+          ...state.toasts.filter(t => Date.now() - t.start < 3000),
+          {start: Date.now(), text: action.text},
+        ]
       };
     default:
       (action: empty); // eslint-disable-line

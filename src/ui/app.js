@@ -11,6 +11,7 @@ import Main from '../containers/main';
 import Nav from '../containers/nav';
 import Read from '../containers/read';
 import Settings from '../containers/settings';
+import Toast from '../containers/toast';
 import type State from '../reducer';
 
 type Props = {store: Store<State>, history: any};
@@ -30,6 +31,7 @@ export default ({store, history}: Props) =>
             <Route path='/'         exact component={RedirectToGenesis1}/>
           </Switch>
         </section>
+        <Toast/>
         <Nav style={{position: 'fixed', right: 0, bottom: 0, left: 0}}/>
       </Main>
     </Router>

@@ -1,0 +1,7 @@
+.toast {
+  opacity: 0.8;
+}
+
+.toast-fade-out {
+  opacity: 0;
+}
