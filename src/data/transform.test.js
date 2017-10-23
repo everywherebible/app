@@ -5,6 +5,7 @@ import {
   tagsAndText,
   stripTags,
   addSpansAroundVerses,
+  withTagStack,
   addDropCapsClassToFirstLetter,
 } from './transform';
 
@@ -18,6 +19,9 @@ const GENESIS_6_NO_OBJECT = load('genesis-6-no-object');
 const GENESIS_6_NO_OBJECT_WITH_SPANS = load('genesis-6-no-object-with-spans');
 const GENESIS_6_NO_OBJECT_WITH_SPANS_WITH_DROP_CAPS =
   load('genesis-6-no-object-with-spans-with-drop-caps');
+const HOSEA_2 = load('hosea-2');
+const HOSEA_2_NO_OBJECT_WITH_SPANS_WITH_DROP_CAPS =
+  load('hosea-2-no-object-with-spans-with-drop-caps');
 
 const concat = g => Array.from(g).map(i => i.value).join('');
 
@@ -193,12 +197,23 @@ describe('transform', () => {
     it('correctly parses genesis 6', () => {
       const actual = concat(
           addDropCapsClassToFirstLetter(
-            addSpansAroundVerses(
-              stripTags('script',
-                stripTags('object',
-                  tagsAndText(GENESIS_6))))));
-      require('fs').writeFileSync('/tmp/genesis6.html', actual);
+            withTagStack(
+              addSpansAroundVerses(
+                stripTags('script',
+                  stripTags('object',
+                    tagsAndText(GENESIS_6)))))));
       expect(actual).toBe(GENESIS_6_NO_OBJECT_WITH_SPANS_WITH_DROP_CAPS);
+    });
+
+    it('correctly parses chapter with footnote first', () => {
+      const actual = concat(
+          addDropCapsClassToFirstLetter(
+            withTagStack(
+              addSpansAroundVerses(
+                stripTags('script',
+                  stripTags('object',
+                    tagsAndText(HOSEA_2)))))));
+      expect(actual).toBe(HOSEA_2_NO_OBJECT_WITH_SPANS_WITH_DROP_CAPS);
     });
   });
 });

@@ -130,18 +130,33 @@ export function* addSpansAroundVerses(tagsAndText) {
   }
 }
 
-export function* addDropCapsClassToFirstLetter(tagsAndText) {
+export function* withTagStack(tagsAndText) {
+  const stack = [];
+
+  for (let item of tagsAndText) {
+    yield Object.assign({stack: stack.slice(0)}, item);
+
+    if (item.type === 'tag') {
+      if (item.isStart)
+        stack.push(item);
+      else
+        stack.pop();
+    }
+  }
+}
+
+export function* addDropCapsClassToFirstLetter(tagsAndTextWithStack) {
   let sawFirstReferenceNumber = false;
   let sawClosingSpan = false;
   let addedClass = false;
 
-  for (let item of tagsAndText) {
+  for (let item of tagsAndTextWithStack) {
     if (addedClass) {
       yield item;
       continue;
     }
 
-    const {type, name, isStart, value, attributes} = item;
+    const {type, name, isStart, value, attributes, stack} = item;
 
     if (!sawFirstReferenceNumber &&
         type === 'tag' &&
@@ -161,7 +176,9 @@ export function* addDropCapsClassToFirstLetter(tagsAndText) {
       continue;
     }
 
-    if (sawClosingSpan && type === 'text') {
+    if (sawClosingSpan &&
+        (last(stack).attributes && last(stack).attributes.class === 'verse') &&
+        type === 'text') {
       const parts = value.match(/^(\W*)(\w)(.*)/);
 
       if (!parts) {
@@ -205,9 +222,10 @@ export function* addDropCapsClassToFirstLetter(tagsAndText) {
 
 export default text => Array.from(
     addDropCapsClassToFirstLetter(
-      addSpansAroundVerses(
-        stripTags('script',
-          stripTags('object',
-            tagsAndText(text))))))
+      withTagStack(
+        addSpansAroundVerses(
+          stripTags('script',
+            stripTags('object',
+              tagsAndText(text)))))))
   .map(i => i.value)
   .join('');
