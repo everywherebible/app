@@ -70,6 +70,10 @@ export function* tagsAndText(html) {
       }
     }
   }
+
+  const ctx = last(context);
+  if (ctx.type === 'document' && ctx.start < index - 1)
+    yield {type: 'text', value: html.substring(ctx.start, index)};
 }
 
 export function* stripTags(tagName, tagsAndText) {
@@ -220,12 +224,63 @@ export function* addDropCapsClassToFirstLetter(tagsAndTextWithStack) {
   }
 }
 
+export function* withSurroundingEvents(tagsAndText) {
+  const window = [null];
+
+  for (let item of tagsAndText) {
+    if (window.length === 3)
+      yield Object.assign({before: window[0], after: window[2]}, window[1]);
+
+    window.push(item);
+
+    if (window.length > 3)
+      window.shift();
+  }
+
+  yield Object.assign({before: window[0], after: window[2]}, window[1]);
+  yield Object.assign({before: window[1], after: null}, window[2]);
+}
+
+export function* stripCopyright(tagsAndTextWithSurroundingEvents) {
+  let inTag = false;
+
+  for (let item of tagsAndTextWithSurroundingEvents) {
+    if (item.type === 'text' &&
+        item.value[item.value.length - 1] === '(' &&
+        item.after.attributes &&
+        item.after.attributes.class === 'copyright') {
+      yield {
+        type: 'text',
+        value: item.value.substring(0, item.value.length - 1),
+      };
+    } else if (item.type === 'tag' &&
+               item.attributes.class === 'copyright') {
+      // Don't yield this item
+      inTag = true;
+    } else if (inTag) {
+      if (item.type === 'tag' && !item.isStart)
+        inTag = false;
+    } else if (item.type === 'text' &&
+               item.value[0] === ')' &&
+               last(item.before.stack).attributes &&
+               last(item.before.stack).attributes.class === 'copyright') {
+      const value = item.value.substring(1);
+      if (value)
+        yield {type: 'text', value};
+    } else {
+      yield item;
+    }
+  }
+}
+
 export default text => Array.from(
-    addDropCapsClassToFirstLetter(
-      withTagStack(
-        addSpansAroundVerses(
-          stripTags('script',
-            stripTags('object',
-              tagsAndText(text)))))))
+    stripCopyright(
+      withSurroundingEvents(
+        addDropCapsClassToFirstLetter(
+          withTagStack(
+            addSpansAroundVerses(
+              stripTags('script',
+                stripTags('object',
+                  tagsAndText(text)))))))))
   .map(i => i.value)
   .join('');

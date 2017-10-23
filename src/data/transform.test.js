@@ -1,12 +1,13 @@
 import {join} from 'path';
 import {readFileSync} from 'fs';
 
-import {
+import transform, {
   tagsAndText,
   stripTags,
   addSpansAroundVerses,
   withTagStack,
   addDropCapsClassToFirstLetter,
+  withSurroundingEvents,
 } from './transform';
 
 const load = name =>
@@ -19,9 +20,13 @@ const GENESIS_6_NO_OBJECT = load('genesis-6-no-object');
 const GENESIS_6_NO_OBJECT_WITH_SPANS = load('genesis-6-no-object-with-spans');
 const GENESIS_6_NO_OBJECT_WITH_SPANS_WITH_DROP_CAPS =
   load('genesis-6-no-object-with-spans-with-drop-caps');
+const GENESIS_6_NO_OBJECT_WITH_SPANS_WITH_DROP_CAPS_NO_COPYRIGHT =
+  load('genesis-6-no-object-with-spans-with-drop-caps-no-copyright');
 const HOSEA_2 = load('hosea-2');
 const HOSEA_2_NO_OBJECT_WITH_SPANS_WITH_DROP_CAPS =
   load('hosea-2-no-object-with-spans-with-drop-caps');
+const HOSEA_2_NO_OBJECT_WITH_SPANS_WITH_DROP_CAPS_NO_COPYRIGHT =
+  load('hosea-2-no-object-with-spans-with-drop-caps-no-copyright');
 
 const concat = g => Array.from(g).map(i => i.value).join('');
 
@@ -170,6 +175,18 @@ describe('transform', () => {
       const actual = concat(tagsAndText(GENESIS_6));
       expect(actual).toBe(GENESIS_6);
     });
+
+    [
+      'foo',
+      '<div/>',
+      '<div>foo</div>',
+      '<div class="bar"><span>baz</span> boom</div>',
+      'foo<div/>',
+      '<div/>foo',
+    ].forEach(s => it(`maintains structure for \`${s}\``, () => {
+      const actual = concat(withSurroundingEvents(tagsAndText(s)));
+      expect(actual).toBe(s);
+    }));
   });
 
   describe('stripTags', () => {
@@ -207,13 +224,41 @@ describe('transform', () => {
 
     it('correctly parses chapter with footnote first', () => {
       const actual = concat(
-          addDropCapsClassToFirstLetter(
-            withTagStack(
-              addSpansAroundVerses(
-                stripTags('script',
-                  stripTags('object',
-                    tagsAndText(HOSEA_2)))))));
+          withSurroundingEvents(
+            addDropCapsClassToFirstLetter(
+              withTagStack(
+                addSpansAroundVerses(
+                  stripTags('script',
+                    stripTags('object',
+                      tagsAndText(HOSEA_2))))))));
       expect(actual).toBe(HOSEA_2_NO_OBJECT_WITH_SPANS_WITH_DROP_CAPS);
+    });
+  });
+
+  describe('withSurroundingEvents', () => {
+    [
+      'foo',
+      '<div/>',
+      '<div>foo</div>',
+      '<div class="bar"><span>baz</span> boom</div>',
+    ].forEach(s => it(`maintains structure for \`${s}\``, () => {
+      const actual = concat(withSurroundingEvents(tagsAndText(s)));
+      expect(actual).toBe(s);
+    }));
+  });
+
+  describe('default export', () => {
+    it('correctly parses genesis 6', () => {
+      const actual = transform(GENESIS_6);
+      const expected =
+        GENESIS_6_NO_OBJECT_WITH_SPANS_WITH_DROP_CAPS_NO_COPYRIGHT;
+      expect(actual).toBe(expected);
+    });
+
+    it('correctly parses hosea 2', () => {
+      const actual = transform(HOSEA_2);
+      const expected = HOSEA_2_NO_OBJECT_WITH_SPANS_WITH_DROP_CAPS_NO_COPYRIGHT;
+      expect(actual).toBe(expected);
     });
   });
 });

@@ -76,15 +76,19 @@ class Chapter extends Component {
         </div>
       </div> :
       <div
-        style={{
-          marginBottom: NAV_HEIGHT,
-          padding: '0 1rem 1rem 1rem',
-          lineHeight: '1.4em',
-        }}
-
-        dangerouslySetInnerHTML={{__html: this.props.text}}
-
-        onClick={this.onClick}/>;
+          style={{
+            marginBottom: NAV_HEIGHT,
+            padding: '0 1rem 1rem 1rem',
+            lineHeight: '1.4em',
+          }}>
+        <div
+          dangerouslySetInnerHTML={{__html: this.props.text}}
+          onClick={this.onClick}/>
+        <p className='footnotes' style={{fontSize: '0.7em'}}>
+          <a href='https://www.esv.org'>ESV</a>
+        </p>
+      </div>
+      ;
   }
 };
 
