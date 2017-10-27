@@ -2,9 +2,11 @@
 import type {Store} from 'redux';
 
 import {setChapterText} from '../actions';
+import {FROM_SERVICE_WORKER_HEADER} from '../constants';
 import type {Reference} from './model';
 import {chapterIndex, before, after, CHAPTER_COUNT} from './model';
 import type {State} from '../reducer';
+import transform from './transform';
 
 const BASE = new URL('http://www.esvapi.org/v2/rest/passageQuery?key=IP');
 const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
@@ -27,7 +29,10 @@ export const lookup = (url: URL | Reference): Promise<Response> => {
 
 const fetchChapter = (store: Store, reference: Reference): Promise<string> =>
   lookup(reference)
-      .then(response => response.text())
+      .then(response =>
+          response.headers.get(FROM_SERVICE_WORKER_HEADER)?
+            response.text() :
+            response.text().then(text => transform(text)))
       .then(text => store.dispatch(setChapterText(reference, text)));
 
 const indexIsCached = (state: State, index: number): boolean =>

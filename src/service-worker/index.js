@@ -8,6 +8,7 @@
  */
 /* eslint-disable no-restricted-globals */
 
+import {FROM_DB_HEADER, FROM_SERVICE_WORKER_HEADER} from '../constants';
 import store from '../data/db';
 import {stringToReference, chapterIndex} from '../data/model';
 import transform from '../data/transform';
@@ -42,13 +43,19 @@ self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   if (isPassageLookup(url))
     event.respondWith(fromDb(url)
-      .then(text => new Response(text, {status: 200}))
+      .then(text => new Response(text, {
+        status: 200,
+        headers: {[FROM_DB_HEADER]: true, [FROM_SERVICE_WORKER_HEADER]: true},
+      }))
       .catch(error =>
         fetch(event.request)
           .then(response => response.text())
           .then(transform)
           .then(text => {
             toDb(new URL(event.request.url), text)
-            return new Response(text, {status: 200});
+            return new Response(text, {
+              status: 200,
+              headers: {[FROM_SERVICE_WORKER_HEADER]: true},
+            });
           })));
 });
