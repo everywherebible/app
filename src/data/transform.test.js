@@ -27,7 +27,9 @@ const HOSEA_2_NO_OBJECT_WITH_SPANS_WITH_DROP_CAPS =
   load('hosea-2-no-object-with-spans-with-drop-caps');
 const HOSEA_2_NO_OBJECT_WITH_SPANS_WITH_DROP_CAPS_NO_COPYRIGHT =
   load('hosea-2-no-object-with-spans-with-drop-caps-no-copyright');
-
+const DEUTERONOMY_18 = load('deuteronomy-18');
+const DEUTERONOMY_18_NO_OBJECT_WITH_SPANS_WITH_DROP_CAPS =
+  load('deuteronomy-18-no-object-with-spans-with-drop-caps');
 const concat = g => Array.from(g).map(i => i.value).join('');
 
 describe('transform', () => {
@@ -232,6 +234,18 @@ describe('transform', () => {
                     stripTags('object',
                       tagsAndText(HOSEA_2))))))));
       expect(actual).toBe(HOSEA_2_NO_OBJECT_WITH_SPANS_WITH_DROP_CAPS);
+    });
+
+    it('correctly drop-caps first letter with html entity first', () => {
+      const actual = concat(
+          addDropCapsClassToFirstLetter(
+            withTagStack(
+              addSpansAroundVerses(
+                stripTags('script',
+                  stripTags('object',
+                    tagsAndText(DEUTERONOMY_18)))))));
+      require('fs').writeFileSync('/tmp/chapter.html', actual);
+      expect(actual).toBe(DEUTERONOMY_18_NO_OBJECT_WITH_SPANS_WITH_DROP_CAPS);
     });
   });
 

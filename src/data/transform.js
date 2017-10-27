@@ -183,14 +183,14 @@ export function* addDropCapsClassToFirstLetter(tagsAndTextWithStack) {
     if (sawClosingSpan &&
         (last(stack).attributes && last(stack).attributes.class === 'verse') &&
         type === 'text') {
-      const parts = value.match(/^(\W*)(\w)(.*)/);
+      const parts = value.match(/^(\s*)(&#?[\w]+;)*(\w)(.*)/);
 
       if (!parts) {
         yield item;
         continue;
       }
 
-      const [, leadingWhitespace, firstLetter, rest] = parts;
+      const [, leadingWhitespace, leadingEntities, firstLetter, rest] = parts;
 
       if (leadingWhitespace)
         yield {type: 'text', value: leadingWhitespace};
@@ -203,7 +203,10 @@ export function* addDropCapsClassToFirstLetter(tagsAndTextWithStack) {
         attributes: {class: 'first-letter'},
       }
 
-      yield {type: 'text', value: firstLetter};
+      if (leadingEntities)
+        yield {type: 'text', value: leadingEntities};
+      else
+        yield {type: 'text', value: firstLetter};
 
       yield {
         type: 'tag',
@@ -214,7 +217,10 @@ export function* addDropCapsClassToFirstLetter(tagsAndTextWithStack) {
       };
 
       if (rest)
-        yield {type: 'text', value: rest};
+        if (leadingEntities)
+          yield {type: 'text', value: firstLetter + rest};
+        else
+          yield {type: 'text', value: rest};
 
       addedClass = true;
       continue;
