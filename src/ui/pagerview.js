@@ -5,7 +5,7 @@ import React, {Component} from 'react';
 import {CHAPTER_COUNT} from '../data/model';
 
 const animations =
-  process.env.NODE_ENV !== 'test' && Element.prototype.animate != null?
+  process.env.NODE_ENV !== 'test' && Element.prototype.animate == null?
     import('web-animations-js') :
     Promise.resolve();
 
