@@ -5,11 +5,15 @@ import copyToClipboard from './copy-to-clipboard';
 import {
   chapterIndex,
   reference as referenceFromIndex,
+  before,
+  after,
   referenceToLocation,
   verseNumIdToReference
 } from '../data/model';
 import {NAV_HEIGHT} from './nav';
 import PagerView from './pagerview';
+
+const BREAK_POINT = 700;
 
 const handleFootnoteClicks = event => {
   const href = event.target.href;
@@ -82,9 +86,16 @@ class Chapter extends Component {
             lineHeight: '1.4em',
           }}>
         <div
+          style={{maxWidth: `${BREAK_POINT - 100}px`, margin: 'auto'}}
           dangerouslySetInnerHTML={{__html: this.props.text}}
           onClick={this.onClick}/>
-        <p className='footnotes' style={{fontSize: '0.7em'}}>
+        <p
+            className='footnotes'
+            style={{
+              fontSize: '0.7em',
+              maxWidth: BREAK_POINT - 100,
+              margin: 'auto',
+            }}>
           <a href='https://www.esv.org'>ESV</a>
         </p>
       </div>
@@ -101,15 +112,33 @@ export default ({
       onClick,
       toast,
     }) =>
-  <PagerView
-    index={chapterIndex(reference)}
-    onIndexChange={index => onReferenceChange(referenceFromIndex(index))}
-    onScroll={onScroll || (() => null)}
-    getInitialScroll={getInitialScroll || (() => null)}
-    renderPage={index =>
-      <Chapter
-        reference={referenceFromIndex(index)}
-        onClick={onClick}
-        text={chapterCache[index]}
-        toast={toast}/>}/>;
-
+  <div className='fit'>
+    <PagerView
+      index={chapterIndex(reference)}
+      onIndexChange={index => onReferenceChange(referenceFromIndex(index))}
+      onScroll={onScroll || (() => null)}
+      getInitialScroll={getInitialScroll || (() => null)}
+      renderPage={index =>
+        <Chapter
+          reference={referenceFromIndex(index)}
+          onClick={onClick}
+          text={chapterCache[index]}
+          toast={toast}
+          />}/>
+    {window.innerWidth > BREAK_POINT?
+      <button
+          type='button'
+          onClick={() => onReferenceChange(before(reference))}
+          className='nav-button'
+          style={{left: '1rem', transform: 'rotate(0.5turn)'}}>
+        &#10140;
+      </button> : null}
+    {window.innerWidth > BREAK_POINT?
+      <button
+          type='button'
+          onClick={() => onReferenceChange(after(reference))}
+          className='nav-button'
+          style={{right: '1rem'}}>
+        &#10140;
+      </button> : null}
+  </div>

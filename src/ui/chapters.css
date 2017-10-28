@@ -40,3 +40,18 @@ object {
   margin-right: 0.2rem;
   margin-left: -.4rem;
 }
+
+.nav-button {
+  position: fixed;
+  bottom: 3rem;
+  color: white;
+  background-color: black;
+  font-weight: bold;
+  border-radius: 1rem;
+  padding: 1rem;
+  width: 2rem;
+  height: 2rem;
+  line-height: 0;
+  padding-left: 0.5rem;
+  border: 0;
+}
