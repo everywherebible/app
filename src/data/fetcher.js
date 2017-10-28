@@ -29,6 +29,11 @@ export const lookup = (url: URL | Reference): Promise<Response> => {
 
 const fetchChapter = (store: Store, reference: Reference): Promise<string> =>
   lookup(reference)
+      .then(response => {
+        if (!response.ok)
+          throw new Error(`${response.url} failed with ${response.status}`);
+        return response;
+      })
       .then(response =>
           response.headers.get(FROM_SERVICE_WORKER_HEADER)?
             response.text() :
