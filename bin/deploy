@@ -1,15 +1,10 @@
 #!/bin/bash -e
 
 if [ "$TRAVIS" ]; then
-  if [ "$TRAVIS_PULL_REQUEST" != false ] || [ "$TRAVIS_BRANCH" != dev ]; then
-    echo not deploying since this isn\'t the dev branch
+  if [ "$TRAVIS_PULL_REQUEST" != false ] || [ "$TRAVIS_BRANCH" != master ]; then
+    echo not deploying since this isn\'t the master branch
     exit
   fi
-fi
-
-if [ "`git rev-parse --abbrev-ref HEAD`" = master ]; then
-  echo you can\'t deploy from the master branch
-  exit
 fi
 
 if ! [ -e build ]; then
@@ -19,16 +14,36 @@ fi
 
 echo deploying...
 
-msg="dev@`git log --pretty=oneline -n 1 --abbrev-commit`"
+# if we're in a travis build, decrypt and use the deploy key (otherwise just
+# rely on some existing authentication)
+if [ $TRAVIS ]; then
+  openssl aes-256-cbc \
+    -K $encrypted_025a83c067be_key \
+    -iv $encrypted_025a83c067be_iv \
+    -in everywherebible-deploy-key.enc \
+    -out everywherebible-deploy-key \
+    -d
+  chmod 600 everywherebible-deploy-key
+  eval `ssh-agent -s`
+  ssh-add everywherebible-deploy-key
+fi
 
-cp esvbible-deploy-key.enc /tmp
-cp 404.html build/
+msg="master@`git log --pretty=oneline -n 1 --abbrev-commit`"
 
-git fetch origin master
-git checkout FETCH_HEAD
-cp -r build/* ./
-rm -rf build
-echo node_modules >> .git/info/exclude
+# deploying to the old esvbible.github.io repo because it's cheap static site
+# hosting.
+git clone \
+  -b master \
+  --single-branch \
+  --depth 1 \
+  git@github.com:esvbible/esvbible.github.io.git \
+  deployrepo
+
+cp deployrepo/{.nojekyll,CNAME} ./
+rm -rf deployrepo/*
+cp -r build/* deployrepo/
+cp .nojekyll CNAME deployrepo/
+cd deployrepo
 
 if ! git diff 2>&1 1>/dev/null; then
   echo no changes, exiting
@@ -38,25 +53,5 @@ fi
 git add .
 git commit -am "$msg"
 
-# if we're in a travis build, decrypt and use the deploy key (otherwise just
-# rely on some existing authentication)
-if [ $TRAVIS ]; then
-  openssl aes-256-cbc \
-    -K $encrypted_60c2c0589728_key \
-    -iv $encrypted_60c2c0589728_iv \
-    -in /tmp/esvbible-deploy-key.enc \
-    -out esvbible-deploy-key \
-    -d
-  chmod 600 esvbible-deploy-key
-  eval `ssh-agent -s`
-  ssh-add esvbible-deploy-key
-fi
-
-git remote add ssh-origin git@github.com:esvbible/esvbible.github.io.git
 git remote -v
-git push ssh-origin HEAD:master
-
-# reset to dev
-if ! [ $CI ]; then
-  git checkout dev
-fi
+git push
