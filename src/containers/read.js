@@ -6,7 +6,7 @@ import type {ContextRouter} from 'react-router';
 import {withRouter} from 'react-router-dom';
 import debounce from 'lodash.debounce';
 
-import {enableFocusMode, addToast} from '../actions';
+import {enableFocusMode, addToast, confirmFocusMode} from '../actions';
 import type {Action} from '../actions';
 import {
   chapterCounts,
@@ -17,15 +17,19 @@ import {
 import type {State} from '../reducer';
 import Chapters from '../ui/chapters';
 import ThatsNotInTheBible from '../ui/thats-not-in-the-bible';
+import ConfirmFocusMode from '../ui/confirm-focus-mode';
 
 type StateProps = {
   +chapterCache: {[number]: string},
   +enableFocusMode: boolean,
+  +hasConfirmedFocusMode: boolean,
 };
 
-const stateToProps = ({chapters, preferences: {enableFocusMode}}: State):
-    StateProps =>
-  ({chapterCache: chapters, enableFocusMode});
+const stateToProps = ({
+      chapters,
+      preferences: {enableFocusMode, hasConfirmedFocusMode}
+    }: State): StateProps =>
+  ({chapterCache: chapters, enableFocusMode, hasConfirmedFocusMode});
 
 type DispatchProps = {
   +setFocusModeEnabled: boolean => any,
@@ -36,6 +40,7 @@ const dispatchToProps = (dispatch: Action => any): DispatchProps =>
   ({
     setFocusModeEnabled: enabled => dispatch(enableFocusMode(enabled)),
     toast: text => dispatch(addToast(text)),
+    confirmFocusMode: () => dispatch(confirmFocusMode()),
   });
 
 const onScroll = debounce((history, location, el) => {
@@ -72,20 +77,26 @@ const ChaptersWithRouter = withRouter(({
     setFocusModeEnabled,
     enableFocusMode,
     toast,
+    hasConfirmedFocusMode,
+    confirmFocusMode,
   } : StateProps & DispatchProps & ContextRouter) => {
     const reference = locationToReference(location);
-    if (chapterCounts[reference.book])
-      return <Chapters
-        reference={reference}
-        chapterCache={chapterCache}
-        onReferenceChange={reference =>
-          history.replace(`/${reference.book}+${reference.chapter}`)}
-        onScroll={event => onScroll(history, location, event.currentTarget)}
-        onClick={event => setFocusModeEnabled(!enableFocusMode)}
-        getInitialScroll={getInitialScroll}
-        toast={toast}/>
-    else
-      return <ThatsNotInTheBible/>;
+    return <div className='fit'>
+      {chapterCounts[reference.book]?
+        <Chapters
+          reference={reference}
+          chapterCache={chapterCache}
+          onReferenceChange={reference =>
+            history.replace(`/${reference.book}+${reference.chapter}`)}
+          onScroll={event => onScroll(history, location, event.currentTarget)}
+          onClick={event => setFocusModeEnabled(!enableFocusMode)}
+          getInitialScroll={getInitialScroll}
+          toast={toast}/> :
+        <ThatsNotInTheBible/>}
+      {enableFocusMode && !hasConfirmedFocusMode?
+        <ConfirmFocusMode confirmFocusMode={confirmFocusMode}/> :
+        null}
+    </div>;
 });
 
 export default withRouter(

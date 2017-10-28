@@ -31,6 +31,7 @@ export const setRecents = (recents: Array<Reference>): SetRecents =>
 export type Preferences = {
   +enableFocusMode: boolean,
   +enableNightMode: boolean,
+  +hasConfirmedFocusMode: boolean,
 };
 
 export type SettablePreferences = {
@@ -70,6 +71,11 @@ export type AddToast = {
 
 export const addToast = (text: string): AddToast => ({type: 'add-toast', text});
 
+export type ConfirmFocusMode = {+type: 'confirm-focus-mode'};
+
+export const confirmFocusMode = (): ConfirmFocusMode =>
+  ({type: 'confirm-focus-mode'});
+
 export type Action =
     SetChapterText
   | AddRecent
@@ -77,4 +83,5 @@ export type Action =
   | EnableFocusMode
   | EnableNightMode
   | SetPreferences
-  | AddToast;
+  | AddToast
+  | ConfirmFocusMode;

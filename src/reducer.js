@@ -21,6 +21,7 @@ export const DEFAULT = {
   preferences: {
     enableFocusMode: false,
     enableNightMode: false,
+    hasConfirmedFocusMode: false,
   },
   toasts: [],
 };
@@ -76,6 +77,11 @@ export default (state: State = DEFAULT, action: Action) => {
           ...state.toasts.filter(t => Date.now() - t.start < 3000),
           {start: Date.now(), text: action.text},
         ]
+      };
+    case 'confirm-focus-mode':
+      return {
+        ...state,
+        preferences: {...state.preferences, hasConfirmedFocusMode: true},
       };
     default:
       (action: empty); // eslint-disable-line

@@ -14,7 +14,7 @@ const keyValArrayToObject = (o, {key, value}) => {
 
 // we don't want to save the preference for, e.g. focus mode, as this resets on
 // most navigation.
-const PERSISTED_KEYS = ['enableNightMode'];
+const PERSISTED_KEYS = ['enableNightMode', 'hasConfirmedFocusMode'];
 
 export const populateStoreWithPreferences = (dispatch: Action => any) => {
   db({store: 'preferences'}).all().then(preferences =>
