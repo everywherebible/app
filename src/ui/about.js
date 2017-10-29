@@ -17,6 +17,21 @@ export default () =>
       <h3 style={{textAlign: 'center'}}>{pkg.displayName}</h3>
 
       <p>
+        {pkg.description}. Read more at:<br/>
+
+        <a
+          style={{
+            width: '100%',
+            marginTop: '1rem',
+            fontSize: '1.3em',
+            textAlign: 'center',
+            display: 'inline-block',
+          }}
+          href={pkg.homepage}>everywherebible.org</a>
+      </p>
+
+
+      <p>
         Developed by <a href={REPO}>Aaron Stacy</a> and released under <a
         href={REPO + '/blob/dev/LICENSE'}>the {pkg.license} License</a>.
       </p>
