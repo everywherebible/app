@@ -1,8 +1,8 @@
-# Offline, mobile ESV Bible
+# The Everywhere Bible app
 
-A [progressive web app](https://en.wikipedia.org/wiki/Progressive_web_app) built with [create-react-app](https://github.com/facebookincubator/create-react-app) that uses the [ESV V2 API](http://www.esvapi.org/api/). Content is cached for offline use.
+A [progressive web app](https://en.wikipedia.org/wiki/Progressive_web_app) built with [create-react-app](https://github.com/facebookincubator/create-react-app) that uses the [ESV V2 API](http://www.esvapi.org/api/). The app works offline when service workers are supported.
 
-[![Build Status](https://travis-ci.org/esvbible/esvbible.github.io.svg?branch=dev)](https://travis-ci.org/esvbible/esvbible.github.io)
+[![Build Status](https://travis-ci.org/everywherebible/app.svg?branch=master)](https://travis-ci.org/everywherebible/app)
 
 ## Development
 
@@ -11,28 +11,37 @@ A [progressive web app](https://en.wikipedia.org/wiki/Progressive_web_app) built
 Get [yarn](https://yarnpkg.com/en/) and run:
 
     yarn install
-    
+
 ### Dev server and tooling
 
 Start the dev server and open http://localhost:3000
 
     yarn start
-    
+
 You can also optionally start the type checker and unit tests (in separate terminals, since they've got watchers):
 
     yarn typecheck
     yarn test
-    
+
 ## Deploying
 
-Push to the `dev` branch and wait for [the Travis build](https://travis-ci.org/esvbible/esvbible.github.io) to run.
+Push to the `master` branch and wait for [the Travis build](https://travis-ci.org/everywherebible/app) to run.
+
+There's this weird thing about the deployment: the site is hosted statically by
+the https://github.com/esvbible/esvbible.github.io repository, and [fronted by
+Cloudflare](https://blog.cloudflare.com/secure-and-fast-github-pages-with-cloudflare/)
+at the en.everywherebible.org subdomain. The everywherebible.github.io page is
+already used for the splash page explaining this project, and originally the
+app was deployed to that `esvbible` org, so when it was migrated to the
+`everywherebible` org, I just continued to use the original location for
+hosting.
 
 # Small print
 
 ## License
 
 Source code [licensed under the MIT
-License](/esvbible/esvbible.github.io/blob/dev/LICENSE).
+License](/everywherebible/app/blob/dev/LICENSE).
 
 ## Credits
 

@@ -1,7 +1,8 @@
 {
-  "name": "esvbible",
+  "name": "everywherebible",
   "version": "0.1.0",
-  "description": "Offline, mobile ESV Bible",
+  "displayName": "Everywhere Bible",
+  "description": "A Bible app for slow connections",
   "author": "Aaron Stacy",
   "license": "MIT",
   "dependencies": {
@@ -72,7 +73,7 @@
   "bugs": {
     "url": "https://github.com/esvbible/esvbible.github.io/issues"
   },
-  "homepage": "https://github.com/esvbible/esvbible.github.io#readme",
+  "homepage": "https://everywherebible.org",
   "proxy": "http://www.esvapi.org",
   "jest": {
     "collectCoverageFrom": [

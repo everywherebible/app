@@ -22,9 +22,9 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="/icons/ms-icon-144x144.png">
 
-    <title>ESV Bible</title>
+    <title><%= htmlWebpackPlugin.options.pkg.displayName %></title>
 
-    <meta name="description" content="Offline, mobile ESV Bible">
+    <meta name="description" content="<%= htmlWebpackPlugin.options.pkg.description %>">
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

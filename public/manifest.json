@@ -1,6 +1,6 @@
 {
-  "short_name": "ESV Bible",
-  "name": "Offline, mobile ESV Bible",
+  "short_name": "Everywhere Bible",
+  "name": "A Bible app for slow connections",
   "icons": [
     {
       "src": "/icons/android-icon-36x36.png",

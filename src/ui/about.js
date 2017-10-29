@@ -14,7 +14,7 @@ export default () =>
         margin: '0 1rem',
       }}>
     <div style={{marginTop: '-3rem', textAlign: 'justify'}}>
-      <h3 style={{textAlign: 'center'}}>{pkg.description}</h3>
+      <h3 style={{textAlign: 'center'}}>{pkg.displayName}</h3>
 
       <p>
         Developed by <a href={REPO}>Aaron Stacy</a> and released under <a
