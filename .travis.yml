@@ -5,3 +5,9 @@ cache: yarn
 script: yarn typecheck && yarn build && yarn test
 
 after_success: bin/deploy
+
+# This sets the CLOUDFLARE_API_KEY environment variable so we can purge the
+# cache after deploying.
+env:
+  global:
+    secure: psJtZF/iTO34OxtXJxu9MSAUwyHQoKVrOdoJVEmXEZ7rr4t4Mrv+luZH7g83ppYzpq9z3uC9XkhTrwO/C0EsP29CMV4z+kI4snHpVRIGXAFAgVXIudadbGY6VGeuyfwnnXqjfWY2zTAhm1cNFN9SBdvSGRwd0Er5+AJS2v8V4kmdHk5Xn2CK9qDyXptWLSkVRkzz3LpxYYaifetKLO22lq1PIzhZWPB7ezG3Ym9dlgRdAZUQ4Llo6u7wqdc0695Gp/vFXO+i3URoci0zDeB2gwL/I1SCFXlVXHtxt+fr00BW2G11+OdfsoCLcv/sniYP5mPdCpY2RzPBNhUMw0LlUTBl36+pFkDr4X1+j5ti3QdZhMmWf21Pt+DsmH0N4zQWiTKslfpmXHYY665QiDmIx6uAv3aBcsYbpfFl0SbV+JZfxVjogLZwru0SoH7shQBUGfG8xgZxhBblq6+RuezeFmNqGM/tyWY0w/mmsCv8UkCJVfdmUCAYtCYH92KgBLnVdXMQ1rUc1Af47eYqFyMag/avn7HP4hllhiPaXj/0o3qQmFsZbnR8/+Swcr40XHZH4uN5GLIDIoRFaTEkm7yvIvf+g+LbHCby02LFFhDW2gepDEVb7wRqJSiRl4Jw8hxEfC3xqSdhbygFDGC70s32MNAwSnduo5YgJypIx2vfXpk=
