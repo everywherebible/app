@@ -9,7 +9,7 @@
 /* eslint-disable no-restricted-globals */
 
 import {FROM_DB_HEADER, FROM_SERVICE_WORKER_HEADER} from '../constants';
-import store from '../db/bibles/esv';
+import store from '../data/db';
 import {stringToReference, chapterIndex} from '../data/model';
 import transform from '../data/transform';
 

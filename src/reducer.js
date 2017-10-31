@@ -6,14 +6,14 @@ import {chapterIndex, isEqual} from './data/model';
 
 const RECENT_COUNT = 10;
 
-export type Toast = {|start: number, text: string|}; // TODO: find a better home
+export type Toast = {start: number, text: string}; // TODO: find a better home
 
-export type State = {|
+export type State = {
   +chapters: {[number]: string},
   +recents: Array<Reference>,
   +preferences: Preferences,
   +toasts: Array<Toast>,
-|};
+}
 
 export const DEFAULT = {
   chapters: {},
