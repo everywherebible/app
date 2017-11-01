@@ -144,16 +144,16 @@ type Book = $Keys<typeof chapterCounts>;
 
 export const books: Array<Book> = Object.getOwnPropertyNames(chaptersBefore);
 
-export type Reference = {
+export type Reference = {|
   +book: Book,
   +chapter: number,
   +verse: number
-}
+|};
 
-export type Chapter = {
+export type Chapter = {|
   +reference: Reference,
   +text: string
-}
+|};
 
 export const chapterIndex = (reference: Reference): number => {
   return chaptersBefore[reference.book] + reference.chapter - 1;
