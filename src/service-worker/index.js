@@ -14,17 +14,23 @@ import {stringToReference, chapterIndex} from '../data/model';
 import transform from '../data/transform';
 
 const isPassageLookup = (url: URL): boolean => {
-  if (process.env.NODE_ENV !== 'development')
+  if (process.env.NODE_ENV !== 'development' &&
+      url.host === 'cors-anywhere.herokuapp.com')
     url = new URL(url.pathname.substring(1));
 
-  return /^\/v2\/rest\/passageQuery/.test(url.pathname);
+  return /^\/v3\/passage\/html/.test(url.pathname) ||
+         /^\/v2\/rest\/passageQuery/.test(url.pathname);
 }
 
-const fromDb = (url: URL): Promise<string> =>
-  store().get(chapterIndex(stringToReference(url.searchParams.get('passage'))));
+const fromDb = (url: URL): Promise<string> => {
+  const passageString = url.searchParams.has('q')?
+    url.searchParams.get('q') : url.searchParams.get('passage');
+  return store().get(chapterIndex(stringToReference(passageString)));
+}
 
 const toDb = (url: URL, text: string) => {
-  const passage = url.searchParams.get('passage');
+  const passage = url.searchParams.has('q')?
+    url.searchParams.get('q') : url.searchParams.get('passage');
   const reference = stringToReference(passage);
   const index = chapterIndex(reference);
 
