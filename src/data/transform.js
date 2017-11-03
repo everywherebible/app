@@ -151,7 +151,7 @@ export function* withTagStack(tagsAndText) {
 
 export function* addDropCapsClassToFirstLetter(tagsAndTextWithStack) {
   let sawFirstReferenceNumber = false;
-  let sawClosingSpan = false;
+  let sawClosingSpanOrB = false;
   let addedClass = false;
 
   for (let item of tagsAndTextWithStack) {
@@ -171,16 +171,16 @@ export function* addDropCapsClassToFirstLetter(tagsAndTextWithStack) {
     }
 
     if (sawFirstReferenceNumber &&
-        !sawClosingSpan &&
+        !sawClosingSpanOrB &&
         type === 'tag' &&
-        name === 'span' &&
+        (name === 'span' || name === 'b') &&
         !isStart) {
-      sawClosingSpan = true;
+      sawClosingSpanOrB = true;
       yield item;
       continue;
     }
 
-    if (sawClosingSpan &&
+    if (sawClosingSpanOrB &&
         (last(stack).attributes && last(stack).attributes.class === 'verse') &&
         type === 'text') {
       const parts = value.match(/^(\s*)(&#?[\w]+;)*(\w)(.*)/);

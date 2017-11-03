@@ -74,7 +74,6 @@
     "url": "https://github.com/esvbible/esvbible.github.io/issues"
   },
   "homepage": "https://everywherebible.org",
-  "proxy": "http://www.esvapi.org",
   "jest": {
     "collectCoverageFrom": [
       "src/**/*.{js,jsx}"

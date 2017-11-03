@@ -1,6 +1,6 @@
 # The Everywhere Bible app
 
-A [progressive web app](https://en.wikipedia.org/wiki/Progressive_web_app) built with [create-react-app](https://github.com/facebookincubator/create-react-app) that uses the [ESV V2 API](http://www.esvapi.org/api/). The app works offline when service workers are supported.
+A [progressive web app](https://en.wikipedia.org/wiki/Progressive_web_app) built with [create-react-app](https://github.com/facebookincubator/create-react-app) that uses the [ESV V3 API](http://www.esvapi.org/api/). The app works offline when service workers are supported.
 
 [![Build Status](https://travis-ci.org/everywherebible/app.svg?branch=master)](https://travis-ci.org/everywherebible/app)
 

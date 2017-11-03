@@ -8,12 +8,12 @@ import {chapterIndex, before, after, CHAPTER_COUNT} from './model';
 import type {State} from '../reducer';
 import transform from './transform';
 
-const BASE = new URL('http://www.esvapi.org/v2/rest/passageQuery?key=IP');
-const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
+const BASE = new URL('https://api.esv.org/v3/passage/html/');
+const ESV_KEY = 'cecc457af593de97294057073c9be28d7ffdfaf9';
 
 export const chapterUrl = (reference: Reference): URL => {
   const url = new URL('', BASE);
-  url.searchParams.set('passage', `${reference.book} ${reference.chapter}`);
+  url.searchParams.set('q', `${reference.book} ${reference.chapter}`);
   return url;
 }
 
@@ -21,10 +21,12 @@ export const lookup = (url: URL | Reference): Promise<Response> => {
   if (!(url instanceof URL))
     url = chapterUrl(url);
 
-  if (window.location.host === 'localhost:3000')
-    return fetch(url.pathname + url.search);
-  else
-    return fetch(CORS_PROXY + url.toString());
+  return fetch(url, {
+    headers: {
+      authorization: `Token ${ESV_KEY}`,
+      accept: 'application/json',
+    }
+  });
 }
 
 const fetchChapter = (store: Store, reference: Reference): Promise<string> =>
@@ -34,10 +36,13 @@ const fetchChapter = (store: Store, reference: Reference): Promise<string> =>
           throw new Error(`${response.url} failed with ${response.status}`);
         return response;
       })
-      .then(response =>
-          response.headers.get(FROM_SERVICE_WORKER_HEADER)?
-            response.text() :
-            response.text().then(text => transform(text)))
+      .then(response => {
+        const fromSW = response.headers.get(FROM_SERVICE_WORKER_HEADER);
+
+        return response.json()
+          .then(obj => obj.passages[0])
+          .then(text => fromSW? text : transform(text));
+      })
       .then(text => store.dispatch(setChapterText(reference, text)));
 
 const indexIsCached = (state: State, index: number): boolean =>

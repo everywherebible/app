@@ -14,7 +14,7 @@ export class KeyValStore {
   db() {
     if (this._db == null)
       this._db = new Promise((resolve, reject) => {
-        const request = indexedDB.open(this._db_name, 7);
+        const request = indexedDB.open(this._db_name, 8);
         request.onerror = () => reject(request.error);
         // TODO: actually handle upgrade
         request.onupgradeneeded = () => {

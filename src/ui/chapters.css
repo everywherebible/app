@@ -13,6 +13,7 @@
   position: relative;
   vertical-align: baseline;
   top: -0.5em;
+  font-weight: normal;
 }
 
 .footnote a, .footnote, .footnotes, .verse-num {

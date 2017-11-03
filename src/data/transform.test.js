@@ -10,8 +10,8 @@ import transform, {
   withSurroundingEvents,
 } from './transform';
 
-const load = name =>
-  readFileSync(join(__dirname, `../../test-data/${name}.html`))
+const load = (name, api = 'esv-api', version = 'v2') =>
+  readFileSync(join(__dirname, `../../test-data/${api}/${version}/${name}.html`))
     .toString()
     .trim();
 
@@ -30,6 +30,13 @@ const HOSEA_2_NO_OBJECT_WITH_SPANS_WITH_DROP_CAPS_NO_COPYRIGHT =
 const DEUTERONOMY_18 = load('deuteronomy-18');
 const DEUTERONOMY_18_NO_OBJECT_WITH_SPANS_WITH_DROP_CAPS =
   load('deuteronomy-18-no-object-with-spans-with-drop-caps');
+const GENESIS_1 = load('genesis-1', 'esv-api', 'v3');
+const GENESIS_1_NO_OBJECT_WITH_SPANS_WITH_DROP_CAPS_NO_COPYRIGHT =
+  load(
+      'genesis-1-no-object-with-spans-with-drop-caps-no-copyright',
+      'esv-api',
+      'v3');
+
 const concat = g => Array.from(g).map(i => i.value).join('');
 
 describe('transform', () => {
@@ -272,6 +279,14 @@ describe('transform', () => {
     it('correctly parses hosea 2', () => {
       const actual = transform(HOSEA_2);
       const expected = HOSEA_2_NO_OBJECT_WITH_SPANS_WITH_DROP_CAPS_NO_COPYRIGHT;
+      expect(actual).toBe(expected);
+    });
+
+    it('correctly parses genesis 1 from v3 api', () => {
+      const actual = transform(GENESIS_1);
+      const expected =
+        GENESIS_1_NO_OBJECT_WITH_SPANS_WITH_DROP_CAPS_NO_COPYRIGHT;
+      require('fs').writeFileSync('/tmp/genesis-1.html', actual)
       expect(actual).toBe(expected);
     });
   });
