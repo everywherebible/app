@@ -20,6 +20,8 @@ declare interface IDBFactory {
   cmp(a: any, b: any): -1|0|1;
 }
 
+declare var indexedDB: IDBFactory;
+
 declare interface IDBRequest extends EventTarget {
   result: any;
   error: Error;
@@ -145,7 +147,7 @@ export default class KeyValStore<K: string | number, V> {
   db(): Promise<IDBDatabase> {
     if (this._db == null)
       this._db = new Promise((resolve, reject) => {
-        const request = window.indexedDB.open(this._db_metadata.name,
+        const request = indexedDB.open(this._db_metadata.name,
                                               this._db_metadata.version);
         request.onerror = () => reject(request.error);
         // TODO: actually handle upgrade
