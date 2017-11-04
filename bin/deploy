@@ -56,6 +56,8 @@ git commit -am "$msg"
 git remote -v
 git push
 
+sleep 10 # give gh-pages a bit to build
+
 curl \
   -v \
   -X DELETE \
