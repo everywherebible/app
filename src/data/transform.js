@@ -1,12 +1,31 @@
+// @flow
+
 const last = a => a[a.length - 1];
 
-export function* tagsAndText(html) {
-  const context = [{type: 'document', start: 0}];
+type TagEvent = {
+  +type: 'tag',
+  +name: string,
+  +isStart: boolean,
+  +attributes: {[string]: string},
+  +value: string,
+};
+
+type TextEvent = {
+  +type: 'text',
+  +value: string,
+};
+
+type ParseEvent = TagEvent | TextEvent;
+
+type ParseEventWithStack = ParseEvent & {+stack: Array<TagEvent>};
+
+export function* tagsAndText(html: string): Generator<ParseEvent, void, void> {
+  const context: Array<any> = [{type: 'document', start: 0}];
   let index = -1;
-  let metadata;
+  let metadata: any = {};
 
   while (index++ < html.length) {
-    const ctx = last(context);
+    const ctx: any = last(context);
     if (ctx.type === 'document') {
       if (html[index] === '<') {
         if (ctx.start !== index)
@@ -34,7 +53,8 @@ export function* tagsAndText(html) {
         }, metadata);
 
         context.pop();
-        last(context).start = index + 1;
+        const lastCtx: any = last(context);
+        lastCtx.start = index + 1;
       } else if (html[index] !== ' ' && html[index] !== '/') {
         context.push({type: 'attribute', start: index});
         context.push({type: 'attributeName', start: index});
@@ -51,12 +71,13 @@ export function* tagsAndText(html) {
       if (html[index] === '=') {
         const attributeName = html.substring(ctx.start, index);
         context.pop();
-        last(context).name = attributeName;
+        const lastCtx: any = last(context);
+        lastCtx.name = attributeName;
         if (html[index + 1] === '"') {
-          last(context).isQuoted = true;
+          lastCtx.isQuoted = true;
           index++;
         }
-        last(context).start = index + 1;
+        lastCtx.start = index + 1;
       }
     } else if (ctx.type === 'attribute') {
       const isAttribteEnd = ctx.isQuoted?
@@ -71,12 +92,13 @@ export function* tagsAndText(html) {
     }
   }
 
-  const ctx = last(context);
+  const ctx: any = last(context);
   if (ctx.type === 'document' && ctx.start < index - 1)
     yield {type: 'text', value: html.substring(ctx.start, index)};
 }
 
-export function* stripTags(tagName, tagsAndText) {
+export function* stripTags(tagName: string, tagsAndText: Iterable<ParseEvent>):
+    Generator<ParseEvent, void, void> {
   let inObjectTag = false;
 
   for (let item of tagsAndText) {
@@ -95,12 +117,15 @@ export function* stripTags(tagName, tagsAndText) {
 }
 
 
-export function* addSpansAroundVerses(tagsAndText) {
+export function* addSpansAroundVerses(tagsAndText: Iterable<ParseEvent>):
+    Generator<ParseEvent, void, void> {
   let inVerse = false;
 
   for (let item of tagsAndText) {
-    const {type, name, isStart, attributes} = item;
-    if (inVerse && type === 'tag' && name === 'p' && !isStart) {
+    if (inVerse &&
+        item.type === 'tag' &&
+        item.name === 'p' &&
+        !item.isStart) {
       yield {
         type: 'tag',
         isStart: false,
@@ -109,7 +134,8 @@ export function* addSpansAroundVerses(tagsAndText) {
         attributes: {},
       };
       inVerse = false;
-    } else if (type === 'tag' && /^(chapter|verse)-num$/.test(attributes.class)) {
+    } else if (item.type === 'tag' &&
+               /^(chapter|verse)-num$/.test(item.attributes.class)) {
       if (inVerse) {
         yield {
           type: 'tag',
@@ -120,7 +146,7 @@ export function* addSpansAroundVerses(tagsAndText) {
         };
       }
       inVerse = true;
-      const id = attributes.id.replace(/^v/, 'vt');
+      const id = item.attributes.id.replace(/^v/, 'vt');
       yield {
         type: 'tag',
         isStart: true,
@@ -134,22 +160,33 @@ export function* addSpansAroundVerses(tagsAndText) {
   }
 }
 
-export function* withTagStack(tagsAndText) {
-  const stack = [];
+export function* withTagStack(tagsAndText: Iterable<ParseEvent>):
+    Generator<ParseEventWithStack, void, void> {
+  const stack: Array<TagEvent> = [];
 
   for (let item of tagsAndText) {
-    yield Object.assign({stack: stack.slice(0)}, item);
+    if (item.type === 'tag')
+      yield {
+        type: 'tag',
+        name: item.name,
+        isStart: item.isStart,
+        attributes: item.attributes,
+        value: item.value,
+        stack: stack.slice(0),
+      };
+    else
+      yield {...item, stack: stack.slice(0)};
 
-    if (item.type === 'tag') {
+    if (item.type === 'tag')
       if (item.isStart)
         stack.push(item);
       else
         stack.pop();
-    }
   }
 }
 
-export function* addDropCapsClassToFirstLetter(tagsAndTextWithStack) {
+export function* addDropCapsClassToFirstLetter(
+    tagsAndTextWithStack: Iterable<any>): Generator<ParseEvent, void, void> {
   let sawFirstReferenceNumber = false;
   let sawClosingSpanOrB = false;
   let addedClass = false;
@@ -230,7 +267,8 @@ export function* addDropCapsClassToFirstLetter(tagsAndTextWithStack) {
   }
 }
 
-export function* withSurroundingEvents(tagsAndText) {
+export function* withSurroundingEvents(tagsAndText: Iterable<any>):
+    Generator<any, void, void> {
   const window = [null];
 
   for (let item of tagsAndText) {
@@ -247,7 +285,9 @@ export function* withSurroundingEvents(tagsAndText) {
   yield Object.assign({before: window[1], after: null}, window[2]);
 }
 
-export function* stripCopyright(tagsAndTextWithSurroundingEvents) {
+export function* stripCopyright(
+    tagsAndTextWithSurroundingEvents: Iterable<any>):
+      Generator<any, void, void> {
   let inTag = false;
 
   for (let item of tagsAndTextWithSurroundingEvents) {
@@ -279,7 +319,7 @@ export function* stripCopyright(tagsAndTextWithSurroundingEvents) {
   }
 }
 
-export default text => Array.from(
+export default (text: string): string => Array.from(
     stripCopyright(
       withSurroundingEvents(
         addDropCapsClassToFirstLetter(

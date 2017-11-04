@@ -12,25 +12,19 @@ import {FROM_DB_HEADER, FROM_SERVICE_WORKER_HEADER} from '../constants';
 import store from '../db/bibles/esv';
 import {stringToReference, chapterIndex} from '../data/model';
 import transform from '../data/transform';
+import {lookup} from '../data/fetcher';
+import type {EsvApiJson} from '../data/fetcher';
 
-const isPassageLookup = (url: URL): boolean => {
-  if (process.env.NODE_ENV !== 'development' &&
-      url.host === 'cors-anywhere.herokuapp.com')
-    url = new URL(url.pathname.substring(1));
-
-  return /^\/v3\/passage\/html/.test(url.pathname) ||
-         /^\/v2\/rest\/passageQuery/.test(url.pathname);
-}
+const isPassageLookup = (url: URL): boolean =>
+  /^\/v3\/passage\/html/.test(url.pathname);
 
 const fromDb = (url: URL): Promise<string> => {
-  const passageString = url.searchParams.has('q')?
-    url.searchParams.get('q') : url.searchParams.get('passage');
+  const passageString = url.searchParams.get('q');
   return store().get(chapterIndex(stringToReference(passageString)));
 }
 
 const toDb = (url: URL, text: string) => {
-  const passage = url.searchParams.has('q')?
-    url.searchParams.get('q') : url.searchParams.get('passage');
+  const passage = url.searchParams.get('q');
   const reference = stringToReference(passage);
   const index = chapterIndex(reference);
 
@@ -46,22 +40,31 @@ const toDb = (url: URL, text: string) => {
 };
 
 self.addEventListener('fetch', event => {
-  const url = new URL(event.request.url);
-  if (isPassageLookup(url))
+  const request: Request = event.request;
+  const url = new URL(request.url);
+
+  if (isPassageLookup(url)) {
     event.respondWith(fromDb(url)
-      .then(text => new Response(text, {
-        status: 200,
-        headers: {[FROM_DB_HEADER]: true, [FROM_SERVICE_WORKER_HEADER]: true},
-      }))
-      .catch(error =>
-        fetch(event.request)
-          .then(response => response.text())
+      .then(text => {
+        const esvApiJson: EsvApiJson = {passages: [text]};
+        return new Response(JSON.stringify(esvApiJson), {
+          status: 200,
+          headers: {[FROM_DB_HEADER]: true, [FROM_SERVICE_WORKER_HEADER]: true},
+        });
+      })
+      .catch(error => {
+        return lookup(url)
+          .then(response => response.json())
+          .then(esvApiJson => esvApiJson.passages[0])
           .then(transform)
           .then(text => {
-            toDb(new URL(event.request.url), text)
-            return new Response(text, {
+            toDb(new URL(request.url), text);
+            const esvApiJson: EsvApiJson = {passages: [text]};
+            return new Response(JSON.stringify(esvApiJson), {
               status: 200,
               headers: {[FROM_SERVICE_WORKER_HEADER]: true},
             });
-          })));
+          })
+      }));
+  }
 });

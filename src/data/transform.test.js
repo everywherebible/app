@@ -215,6 +215,7 @@ describe('transform', () => {
             stripTags('script',
               stripTags('object',
                 tagsAndText(GENESIS_6)))));
+      require('fs').writeFileSync('/tmp/g.html', actual);
       expect(actual).toBe(GENESIS_6_NO_OBJECT_WITH_SPANS);
     });
   });

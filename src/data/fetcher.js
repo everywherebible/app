@@ -11,15 +11,29 @@ import transform from './transform';
 const BASE = new URL('https://api.esv.org/v3/passage/html/');
 const ESV_KEY = 'cecc457af593de97294057073c9be28d7ffdfaf9';
 
+export type EsvApiJson = {|
+  +passages: Array<string>,
+|};
+
+export type EsvApiResponse = {|
+  +headers: {get: (string) => ?string},
+  +url: string,
+  +status: number,
+  +ok: boolean,
+  +json: () => Promise<EsvApiJson>,
+|};
+
 export const chapterUrl = (reference: Reference): URL => {
   const url = new URL('', BASE);
   url.searchParams.set('q', `${reference.book} ${reference.chapter}`);
   return url;
 }
 
-export const lookup = (url: URL | Reference): Promise<Response> => {
+export const lookup = (url: URL | Reference): Promise<EsvApiResponse> => {
   if (!(url instanceof URL))
     url = chapterUrl(url);
+
+  declare function fetch(url: URL, options: mixed): Promise<EsvApiResponse>;
 
   return fetch(url, {
     headers: {
@@ -39,7 +53,7 @@ const fetchChapter = (store: Store, reference: Reference): Promise<string> =>
       .then(response => {
         const fromSW = response.headers.get(FROM_SERVICE_WORKER_HEADER);
 
-        return response.json()
+        return (response.json(): Promise<EsvApiJson>)
           .then(obj => obj.passages[0])
           .then(text => fromSW? text : transform(text));
       })
