@@ -11,7 +11,7 @@ html {
   font-size: 22px;
 }
 
-.night-mode {
+.night-mode, .night-mode button {
   color: white;
   background-color: black;
 }
@@ -22,4 +22,10 @@ a, a:visited {
 
 .night-mode a, .night-mode a:visited {
   color: white;
+}
+
+select {
+  border: 1px solid black;
+  padding-left: .3rem;
+  padding-right: .3rem;
 }

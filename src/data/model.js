@@ -184,7 +184,7 @@ export const before = (ref: Reference): Reference => {
 export const after = (ref: Reference): Reference =>
   reference((chapterIndex(ref) + 1) % CHAPTER_COUNT);
 
-export const stringToReference = (referenceString: string): Reference => {
+export const pathStringToReference = (referenceString: string): Reference => {
   let [bookNumber, book, chapterAndVerse] = referenceString.split(/\s/);
 
   if (!/^\d+$/.test(bookNumber))
@@ -202,8 +202,20 @@ export const stringToReference = (referenceString: string): Reference => {
   };
 }
 
+export const apiPathToReference = (pathname: string): Reference => {
+  const [,,,, dashedBook, chapterDotHtml] = pathname.split('/');
+  const book = books
+    .filter(b => b.toLowerCase().replace(/ /g, '-') === dashedBook)[0];
+  const chapter = parseInt(chapterDotHtml.split('.')[0], 10);
+
+  if (!book || Number.isNaN(chapter))
+    throw new Error(`Could not convert ${pathname} to a reference.`);
+
+  return {book, chapter, verse: 1};
+}
+
 export const locationToReference = (location: Location): Reference =>
-  stringToReference(decodeURI(location.pathname)
+  pathStringToReference(decodeURI(location.pathname)
     .slice(1)
     .replace(/\++/g, ' ')
     .replace(/^\s+/, '')

@@ -7,7 +7,7 @@ import {withRouter} from 'react-router-dom';
 import debounce from 'lodash.debounce';
 
 import {enableFocusMode, addToast, confirmFocusMode} from '../actions';
-import type {Action} from '../actions';
+import type {Action, Translation} from '../actions';
 import {
   chapterCounts,
   locationToReference,
@@ -23,13 +23,23 @@ type StateProps = {
   +chapterCache: {[number]: string},
   +enableFocusMode: boolean,
   +hasConfirmedFocusMode: boolean,
+  +translation: Translation,
 };
 
 const stateToProps = ({
       chapters,
-      preferences: {enableFocusMode, hasConfirmedFocusMode}
+      preferences: {
+        enableFocusMode,
+        hasConfirmedFocusMode,
+        translation,
+      }
     }: State): StateProps =>
-  ({chapterCache: chapters, enableFocusMode, hasConfirmedFocusMode});
+  ({
+    chapterCache: chapters[translation],
+    enableFocusMode,
+    hasConfirmedFocusMode,
+    translation,
+  });
 
 type DispatchProps = {
   +setFocusModeEnabled: boolean => any,
@@ -78,6 +88,7 @@ const ChaptersWithRouter = withRouter(({
     enableFocusMode,
     toast,
     hasConfirmedFocusMode,
+    translation,
     confirmFocusMode,
   } : StateProps & DispatchProps & ContextRouter) => {
     const reference = locationToReference(location);
@@ -91,7 +102,8 @@ const ChaptersWithRouter = withRouter(({
           onScroll={event => onScroll(history, location, event.currentTarget)}
           onClick={event => setFocusModeEnabled(!enableFocusMode)}
           getInitialScroll={getInitialScroll}
-          toast={toast}/> :
+          toast={toast}
+          translation={translation}/> :
         <ThatsNotInTheBible/>}
       {enableFocusMode && !hasConfirmedFocusMode?
         <ConfirmFocusMode confirmFocusMode={confirmFocusMode}/> :

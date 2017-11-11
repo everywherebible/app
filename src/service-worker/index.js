@@ -9,62 +9,107 @@
 /* eslint-disable no-restricted-globals */
 
 import {FROM_DB_HEADER, FROM_SERVICE_WORKER_HEADER} from '../constants';
-import store from '../db/bibles/esv';
-import {stringToReference, chapterIndex} from '../data/model';
+import esvStore from '../db/bibles/esv';
+import kjvStore from '../db/bibles/kjv';
+import {
+  pathStringToReference,
+  apiPathToReference,
+  chapterIndex,
+} from '../data/model';
 import transform from '../data/transform';
-import {lookup} from '../data/fetcher';
+import {ESV_BASE, fetchOrThrow, esvLookup} from '../data/fetcher';
 import type {EsvApiJson} from '../data/fetcher';
 
 const isPassageLookup = (url: URL): boolean =>
-  /^\/v3\/passage\/html/.test(url.pathname);
+  ESV_BASE.hostname === url.hostname || /^\/api/.test(url.pathname);
 
-const fromDb = (url: URL): Promise<string> => {
-  const passageString = url.searchParams.get('q');
-  return store().get(chapterIndex(stringToReference(passageString)));
+const log = (s, f) =>
+  process.env.NODE_ENV === 'development'?
+    console.log(`${f != null? '%c' : ''}${s}`, f) :
+    null;
+
+const logStorage = (url, reference, index) =>
+  log(`Storing ${url.toString()} with reference ${JSON.stringify(reference)} as ${index}`,
+      'color: #888; font-size: 0.8em');
+
+const fromKjvDb = (url: URL): Promise<string> => {
+  return kjvStore().get(chapterIndex(apiPathToReference(url.pathname)));
 }
 
-const toDb = (url: URL, text: string) => {
+const toKjvDb = (url: URL, text: string) => {
+  const reference = apiPathToReference(url.pathname);
+  const index = chapterIndex(reference);
+  logStorage(url, reference, index);
+  kjvStore().set(index, text);
+};
+
+const fromEsvDb = (url: URL): Promise<string> => {
+  const passageString = url.searchParams.get('q');
+  return esvStore().get(chapterIndex(pathStringToReference(passageString)));
+}
+
+const toEsvDb = (url: URL, text: string) => {
   const passage = url.searchParams.get('q');
-  const reference = stringToReference(passage);
+  const reference = pathStringToReference(passage);
   const index = chapterIndex(reference);
 
   if (Number.isNaN(index))
     return;
 
-  if (process.env.NODE_ENV === 'development')
-    console.log(`storing ${url.toString()} (${passage})
-                 with reference ${JSON.stringify(reference)}
-                 as ${index}`);
-
-  store().set(index, text);
+  logStorage(url, reference, index);
+  esvStore().set(index, text);
 };
+
+const createSwResponse = (text: string) =>
+  new Response(text, {
+    status: 200,
+    headers: {[FROM_SERVICE_WORKER_HEADER]: true},
+  });
 
 self.addEventListener('fetch', event => {
   const request: Request = event.request;
   const url = new URL(request.url);
+  const isEsv = ESV_BASE.hostname === url.hostname;
 
-  if (isPassageLookup(url)) {
-    event.respondWith(fromDb(url)
-      .then(text => {
+  if (!isPassageLookup(url))
+    return;
+
+  const fromDb: Promise<string> = isEsv? fromEsvDb(url) : fromKjvDb(url);
+
+  return fromDb
+    .then(text => {
+      if (isEsv) {
         const esvApiJson: EsvApiJson = {passages: [text]};
-        return new Response(JSON.stringify(esvApiJson), {
-          status: 200,
-          headers: {[FROM_DB_HEADER]: true, [FROM_SERVICE_WORKER_HEADER]: true},
-        });
-      })
-      .catch(error => {
-        return lookup(url)
+        text = JSON.stringify(esvApiJson);
+      }
+      log(`Serving ${url.pathname}${url.search} from db`,
+          'color: #23bd23; font-size: 0.8em');
+      return new Response(text, {
+        status: 200,
+        headers: {[FROM_DB_HEADER]: true, [FROM_SERVICE_WORKER_HEADER]: true},
+      });
+    })
+    .catch(error => {
+      log(`Serving ${url.pathname}${url.search} from network`,
+          'color: #bd2323; font-size: 0.8em');
+      const request: Promise<Response> = isEsv?
+        esvLookup(url)
           .then(response => response.json())
           .then(esvApiJson => esvApiJson.passages[0])
           .then(transform)
           .then(text => {
-            toDb(new URL(request.url), text);
             const esvApiJson: EsvApiJson = {passages: [text]};
-            return new Response(JSON.stringify(esvApiJson), {
-              status: 200,
-              headers: {[FROM_SERVICE_WORKER_HEADER]: true},
-            });
-          })
-      }));
-  }
+            toEsvDb(url, text);
+            return createSwResponse(JSON.stringify(esvApiJson));
+          }) :
+
+        fetchOrThrow(url)
+          .then(response => response.text())
+          .then(text => {
+            toKjvDb(url, text);
+            return createSwResponse(text);
+          });
+
+      return request;
+    });
 });

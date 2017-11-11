@@ -1,6 +1,6 @@
 // @flow
 
-import type {Action, Preferences} from './actions';
+import type {Action, Preferences, Translation} from './actions';
 import type {Reference} from './data/model';
 import {chapterIndex, isEqual} from './data/model';
 
@@ -9,19 +9,22 @@ const RECENT_COUNT = 10;
 export type Toast = {|start: number, text: string|}; // TODO: find a better home
 
 export type State = {|
-  +chapters: {[number]: string},
+  +chapters: {
+    +[Translation]: {[number]: string},
+  },
   +recents: Array<Reference>,
   +preferences: Preferences,
   +toasts: Array<Toast>,
 |};
 
 export const DEFAULT = {
-  chapters: {},
+  chapters: {kjv: {}, esv: {}},
   recents: [],
   preferences: {
     enableFocusMode: false,
     enableNightMode: false,
     hasConfirmedFocusMode: false,
+    translation: 'kjv',
   },
   toasts: [],
 };
@@ -40,10 +43,21 @@ export default (state: State = DEFAULT, action: Action) => {
     case 'set-chapter-text':
       return {
         ...state,
-        chapters: {
-          ...state.chapters,
-          [chapterIndex(action.reference)]: action.text
-        },
+        chapters: action.translation === 'kjv'?
+          {
+            kjv: {
+              ...state.chapters.kjv,
+              [chapterIndex(action.reference)]: action.text,
+            },
+            esv: state.chapters.esv
+          } :
+          {
+            kjv: state.chapters.kjv,
+            esv: {
+              ...state.chapters.esv,
+              [chapterIndex(action.reference)]: action.text,
+            },
+          },
       };
     case 'add-recent':
       return {

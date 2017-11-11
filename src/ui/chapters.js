@@ -89,15 +89,17 @@ class Chapter extends Component {
           style={{maxWidth: `${BREAK_POINT - 100}px`, margin: 'auto'}}
           dangerouslySetInnerHTML={{__html: this.props.text}}
           onClick={this.onClick}/>
-        <p
-            className='footnotes'
-            style={{
-              fontSize: '0.7em',
-              maxWidth: BREAK_POINT - 100,
-              margin: 'auto',
-            }}>
-          <a href='https://www.esv.org'>ESV</a>
-        </p>
+        {this.props.translation === 'esv'?
+           <p
+              className='footnotes'
+              style={{
+                fontSize: '0.7em',
+                maxWidth: BREAK_POINT - 100,
+                margin: 'auto',
+              }}>
+            <a href='https://www.esv.org'>ESV</a>
+          </p> :
+          null}
       </div>
       ;
   }
@@ -111,6 +113,7 @@ export default ({
       getInitialScroll,
       onClick,
       toast,
+      translation,
     }) =>
   <div className='fit'>
     <PagerView
@@ -124,6 +127,7 @@ export default ({
           onClick={onClick}
           text={chapterCache[index]}
           toast={toast}
+          translation={translation}
           />}/>
     {window.innerWidth > BREAK_POINT?
       <button

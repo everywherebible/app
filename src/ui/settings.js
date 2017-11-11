@@ -8,8 +8,12 @@ type Props = StateProps & DispatchProps;
 const ROW_HEIGHT = '3rem';
 const GUTTER = '1rem';
 
-export default ({enableNightMode, setNightModeEnabled}: Props):
-    React$Element<any> =>
+export default ({
+      enableNightMode,
+      translation,
+      setNightModeEnabled,
+      setTranslation
+    }: Props): React$Element<any> =>
   <div>
     <label
         style={{
@@ -27,6 +31,24 @@ export default ({enableNightMode, setNightModeEnabled}: Props):
           type='checkbox'
           checked={enableNightMode}
           onChange={event => setNightModeEnabled(!enableNightMode)}/>
+    </label>
+    <label style={{
+          display: 'block',
+          lineHeight: ROW_HEIGHT,
+          marginLeft: GUTTER,
+        }}>
+      <span>Translation</span>
+      <select
+        onChange={event => setTranslation(event.target.value)}
+        value={translation}
+        style={{
+          float: 'right',
+          height: ROW_HEIGHT,
+          marginRight: GUTTER,
+        }}>
+        <option value='kjv'>KJV</option>
+        <option value='esv'>ESV</option>
+      </select>
     </label>
     <Link
         to='/about'

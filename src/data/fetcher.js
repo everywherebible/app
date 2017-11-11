@@ -8,7 +8,7 @@ import {chapterIndex, before, after, CHAPTER_COUNT} from './model';
 import type {State} from '../reducer';
 import transform from './transform';
 
-const BASE = new URL('https://api.esv.org/v3/passage/html/');
+export const ESV_BASE = new URL('https://api.esv.org/v3/passage/html/');
 const ESV_KEY = 'cecc457af593de97294057073c9be28d7ffdfaf9';
 
 export type EsvApiJson = {|
@@ -23,44 +23,61 @@ export type EsvApiResponse = {|
   +json: () => Promise<EsvApiJson>,
 |};
 
-export const chapterUrl = (reference: Reference): URL => {
-  const url = new URL('', BASE);
+export const fetchOrThrow = (url: string | URL, init?: RequestOptions):
+    Promise<Response> =>
+  fetch(url, init)
+    .then((response: Response): Response => {
+      if (!response.ok)
+        throw new Error(`${response.url} failed with ${response.status}`);
+      return response;
+    });
+
+const esvChapterUrl = (reference: Reference): URL => {
+  const url = new URL('', ESV_BASE);
   url.searchParams.set('q', `${reference.book} ${reference.chapter}`);
   return url;
-}
+};
 
-export const lookup = (url: URL | Reference): Promise<EsvApiResponse> => {
-  if (!(url instanceof URL))
-    url = chapterUrl(url);
+const kjvChapterUrl = (reference: Reference): URL => {
+  const book = reference.book.toLowerCase().replace(/ /g, '-');
+  return new URL(`/api/v1/kjv/${book}/${reference.chapter}.html`,
+      window.location);
+};
 
-  declare function fetch(url: URL, options: mixed): Promise<EsvApiResponse>;
+export const esvLookup = (url: URL): Promise<EsvApiResponse> => {
+  declare function fetchOrThrow(url: URL, options: mixed): Promise<EsvApiResponse>;
 
-  return fetch(url, {
+  return fetchOrThrow(url, {
     headers: {
       authorization: `Token ${ESV_KEY}`,
       accept: 'application/json',
     }
   });
-}
+};
 
-const fetchChapter = (store: Store, reference: Reference): Promise<string> =>
-  lookup(reference)
-      .then(response => {
-        if (!response.ok)
-          throw new Error(`${response.url} failed with ${response.status}`);
-        return response;
-      })
+const fetchChapter = (store: Store, reference: Reference): Promise<string> => {
+  const translation = store.getState().preferences.translation;
+  const request: Promise<string> = translation === 'kjv'?
+    fetchOrThrow(kjvChapterUrl(reference))
+      .then(response => response.text()) :
+
+    esvLookup(esvChapterUrl(reference))
       .then(response => {
         const fromSW = response.headers.get(FROM_SERVICE_WORKER_HEADER);
 
         return (response.json(): Promise<EsvApiJson>)
           .then(obj => obj.passages[0])
           .then(text => fromSW? text : transform(text));
-      })
-      .then(text => store.dispatch(setChapterText(reference, text)));
+      });
+
+  request
+    .then(text => store.dispatch(setChapterText(translation, reference, text)));
+
+  return request;
+}
 
 const indexIsCached = (state: State, index: number): boolean =>
-  state.chapters[index] != null;
+  state.chapters[state.preferences.translation][index] != null;
 
 export const updateStoreWithPassageText = (store: Store, reference: Reference) => {
   const state = store.getState();

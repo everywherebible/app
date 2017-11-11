@@ -2,15 +2,21 @@
 
 import type {Reference} from './data/model';
 
+export type Translation = 'kjv' | 'esv';
+
 export type SetChapterText = {|
   +type: 'set-chapter-text',
+  +translation: Translation,
   +reference: Reference,
   +text: string,
 |};
 
-export const setChapterText =
-  (reference: Reference, text: string): SetChapterText =>
-    ({type: 'set-chapter-text', reference, text});
+export const setChapterText = (
+        translation: Translation,
+        reference: Reference,
+        text: string,
+      ): SetChapterText =>
+    ({type: 'set-chapter-text', translation, reference, text});
 
 export type AddRecent = {|
   +type: 'add-recent',
@@ -32,13 +38,15 @@ export type Preferences = {|
   +enableFocusMode: boolean,
   +enableNightMode: boolean,
   +hasConfirmedFocusMode: boolean,
+  +translation: Translation,
 |};
 
-export type SettablePreferences = {|
+export type SettablePreferences = {
   +enableFocusMode?: boolean,
   +enableNightMode?: boolean,
   +hasConfirmedFocusMode?: boolean,
-|};
+  +translation?: Translation,
+};
 
 export type EnableFocusMode = {|
   +type: 'enable-focus-mode',

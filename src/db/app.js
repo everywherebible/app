@@ -6,7 +6,7 @@ const PREFERENCES_STORE_NAME = 'preferences';
 const RECENTS_STORE_NAME = 'recents';
 export const DB_METADATA = {
   name: 'app',
-  version: 1,
+  version: 2,
   stores: [PREFERENCES_STORE_NAME, RECENTS_STORE_NAME],
 };
 
@@ -15,10 +15,11 @@ let _preferences_instance, _recents_instance;
 export const PERSISTED_PREFERENCES = {
   enableNightMode: true,
   hasConfirmedFocusMode: true,
+  translation: true,
 };
 type PersistedPreferences = $Keys<typeof PERSISTED_PREFERENCES>;
 
-export class PreferencesStore extends KeyValStore<PersistedPreferences, boolean> {
+export class PreferencesStore extends KeyValStore<PersistedPreferences, any> {
   constructor() {
     super(DB_METADATA, PREFERENCES_STORE_NAME);
   }
