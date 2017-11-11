@@ -40,8 +40,9 @@ const esvChapterUrl = (reference: Reference): URL => {
 
 const kjvChapterUrl = (reference: Reference): URL => {
   const book = reference.book.toLowerCase().replace(/ /g, '-');
-  return new URL(`/api/v1/kjv/${book}/${reference.chapter}.html`,
-      window.location);
+  const baseUrl = process.env.NODE_ENV === 'production'?
+    new URL('https://everywherebible.org') : window.location;
+  return new URL(`/api/v1/kjv/${book}/${reference.chapter}.html`, baseUrl);
 };
 
 export const esvLookup = (url: URL): Promise<EsvApiResponse> => {
