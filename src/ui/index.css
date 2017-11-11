@@ -28,4 +28,6 @@ select {
   border: 1px solid black;
   padding-left: .3rem;
   padding-right: .3rem;
+  background-color: white;
+  border-radius: 4px;
 }
