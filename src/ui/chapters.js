@@ -30,9 +30,11 @@ const handleFootnoteClicks = event => {
 };
 
 const getClickedReference = event => {
-  if (event.target.classList.contains('verse-num') ||
-      event.target.classList.contains('verse'))
-    return verseNumIdToReference(event.target.id);
+  const el = event.target.classList.contains('wj')?
+    event.target.parentElement : event.target;
+
+  if (el.classList.contains('verse-num') || el.classList.contains('verse'))
+    return verseNumIdToReference(el.id);
 }
 
 class Chapter extends Component {
