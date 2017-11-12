@@ -8,6 +8,7 @@ import './nav.css';
 
 export const NAV_HEIGHT = '2.5rem';
 
+// TODO: generate this from ui/app.js
 export const READ_PATH_RE = /^\/((?!(lookup.*$)|(settings.*$)|(about.*$)).+$)/;
 
 export default ({style}) =>

@@ -206,4 +206,18 @@ export default class KeyValStore<K: string | number, V> {
       })
       .then(() => entries);
   }
+
+  allKeys(): Promise<Array<K>> {
+    const keys = [];
+    return this.transact('readonly', store => {
+        const request = store.openKeyCursor();
+        request.onsuccess = event => {
+          const cursor = event.target.result;
+          if (!cursor) return;
+          keys.push(cursor.key);
+          cursor.continue();
+        };
+      })
+      .then(() => keys);
+  }
 }

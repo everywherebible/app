@@ -9,7 +9,7 @@ import debounce from 'lodash.debounce';
 import {enableFocusMode, addToast, confirmFocusMode} from '../actions';
 import type {Action, Translation} from '../actions';
 import {
-  chapterCounts,
+  chaptersBefore,
   locationToReference,
   chapterToLocation,
   referenceToVerseNumId,
@@ -93,7 +93,7 @@ const ChaptersWithRouter = withRouter(({
   } : StateProps & DispatchProps & ContextRouter) => {
     const reference = locationToReference(location);
     return <div className='fit'>
-      {chapterCounts[reference.book]?
+      {chaptersBefore[reference.book] != null?
         <Chapters
           reference={reference}
           chapterCache={chapterCache}

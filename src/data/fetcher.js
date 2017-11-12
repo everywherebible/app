@@ -1,6 +1,7 @@
 // @flow
 import type {Store} from 'redux';
 
+import type {Translation} from '../actions';
 import {setChapterText} from '../actions';
 import {FROM_SERVICE_WORKER_HEADER} from '../constants';
 import type {Reference} from './model';
@@ -55,9 +56,9 @@ export const esvLookup = (url: URL): Promise<EsvApiResponse> => {
   });
 };
 
-const fetchChapter = (store: Store, reference: Reference): Promise<string> => {
-  const translation = store.getState().preferences.translation;
-  const request: Promise<string> = translation === 'kjv'?
+const fetchChapter = (translation: Translation, reference: Reference):
+    Promise<string> =>
+  translation === 'kjv'?
     fetchOrThrow(kjvChapterUrl(reference))
       .then(response => response.text()) :
 
@@ -70,11 +71,12 @@ const fetchChapter = (store: Store, reference: Reference): Promise<string> => {
           .then(text => fromSW? text : transform(text));
       });
 
-  request
+const fetchChapterAndUpdateStore = (store: Store, reference: Reference):
+    Promise<string> => {
+  const translation = store.getState().preferences.translation;
+  return fetchChapter(translation, reference)
     .then(text => store.dispatch(setChapterText(translation, reference, text)));
-
-  return request;
-}
+};
 
 const indexIsCached = (state: State, index: number): boolean =>
   state.chapters[state.preferences.translation][index] != null;
@@ -84,11 +86,11 @@ export const updateStoreWithPassageText = (store: Store, reference: Reference) =
   const index = chapterIndex(reference);
 
   if (!indexIsCached(state, index))
-    fetchChapter(store, reference);
+    fetchChapterAndUpdateStore(store, reference);
 
   if (index > 0 && !indexIsCached(state, index - 1))
-    fetchChapter(store, before(reference));
+    fetchChapterAndUpdateStore(store, before(reference));
 
   if (index < CHAPTER_COUNT && !indexIsCached(state, index + 1))
-    fetchChapter(store, after(reference));
+    fetchChapterAndUpdateStore(store, after(reference));
 }
