@@ -8,7 +8,7 @@ const STORE_NAME = 'chapters';
 
 const DB_METADATA = {
   name: 'bible-kjv',
-  version: 1,
+  version: 2,
   stores: [STORE_NAME],
 };
 

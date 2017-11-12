@@ -30,7 +30,7 @@ const handleFootnoteClicks = event => {
 };
 
 const getClickedReference = event => {
-  const el = event.target.classList.contains('wj')?
+  const el = event.target.classList.contains('woc')?
     event.target.parentElement : event.target;
 
   if (el.classList.contains('verse-num') || el.classList.contains('verse'))
