@@ -116,7 +116,6 @@ export function* stripTags(tagName: string, tagsAndText: Iterable<ParseEvent>):
   }
 }
 
-
 export function* addSpansAroundVerses(tagsAndText: Iterable<ParseEvent>):
     Generator<ParseEvent, void, void> {
   let inVerse = false;
@@ -135,7 +134,7 @@ export function* addSpansAroundVerses(tagsAndText: Iterable<ParseEvent>):
       };
       inVerse = false;
     } else if (item.type === 'tag' &&
-               /^(chapter|verse)-num$/.test(item.attributes.class)) {
+               /^(chapter|verse)-num(\s.*)?$/.test(item.attributes.class)) {
       if (inVerse) {
         yield {
           type: 'tag',
@@ -218,9 +217,12 @@ export function* addDropCapsClassToFirstLetter(
     }
 
     if (sawClosingSpanOrB &&
-        (last(stack).attributes && last(stack).attributes.class === 'verse') &&
+        (last(stack) &&
+         last(stack).attributes &&
+         (last(stack).attributes.class === 'verse' ||
+          last(stack).attributes.class === 'woc')) &&
         type === 'text') {
-      const parts = value.match(/^(\s*)(&#?[\w]+;)*(\w)(.*)/);
+      const parts = value.match(/^([\s"]*)(&#?[\w]+;)*([\w“])(.*)/);
 
       if (!parts) {
         yield item;

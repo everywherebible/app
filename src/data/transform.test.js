@@ -36,6 +36,10 @@ const GENESIS_1_NO_OBJECT_WITH_SPANS_WITH_DROP_CAPS_NO_COPYRIGHT =
       'genesis-1-no-object-with-spans-with-drop-caps-no-copyright',
       'esv-api',
       'v3');
+const JOHN_5 = load('john-5', 'esv-api', 'v3');
+const JOHN_5_TRANSFORMED = load('john-5-transformed', 'esv-api', 'v3');
+const JOHN_10 = load('john-10', 'esv-api', 'v3');
+const JOHN_10_TRANSFORMED = load('john-10-transformed', 'esv-api', 'v3');
 
 const concat = g => Array.from(g).map(i => i.value).join('');
 
@@ -287,8 +291,18 @@ describe('transform', () => {
       const actual = transform(GENESIS_1);
       const expected =
         GENESIS_1_NO_OBJECT_WITH_SPANS_WITH_DROP_CAPS_NO_COPYRIGHT;
-      require('fs').writeFileSync('/tmp/genesis-1.html', actual)
       expect(actual).toBe(expected);
+    });
+
+    it('correctly parses john 5', () => {
+      const actual = transform(JOHN_5);
+      expect(actual).toBe(JOHN_5_TRANSFORMED);
+    });
+
+    it('correctly parses john 10', () => {
+      const actual = transform(JOHN_10);
+      // require('fs').writeFileSync('/tmp/john-x.html', actual)
+      expect(actual).toBe(JOHN_10_TRANSFORMED);
     });
   });
 });

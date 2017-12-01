@@ -10,6 +10,7 @@ import transform from './transform';
 
 export const ESV_BASE = new URL('https://api.esv.org/v3/passage/html/');
 const ESV_KEY = 'cecc457af593de97294057073c9be28d7ffdfaf9';
+const KJV_BASE = new URL('https://everywherebible.org');
 
 export type EsvApiJson = {|
   +passages: Array<string>,
@@ -40,9 +41,7 @@ const esvChapterUrl = (reference: Reference): URL => {
 
 const kjvChapterUrl = (reference: Reference): URL => {
   const book = reference.book.toLowerCase().replace(/ /g, '-');
-  const baseUrl = process.env.NODE_ENV === 'production'?
-    new URL('https://everywherebible.org') : window.location;
-  return new URL(`/api/v1/kjv/${book}/${reference.chapter}.html`, baseUrl);
+  return new URL(`/api/v1/kjv/${book}/${reference.chapter}.html`, KJV_BASE);
 };
 
 export const esvLookup = (url: URL): Promise<EsvApiResponse> => {
