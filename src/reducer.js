@@ -1,7 +1,7 @@
 // @flow
 
-import type {Action, Preferences, Translation} from './actions';
-import type {Reference} from './data/model';
+import type {Action, Preferences} from './actions';
+import type {Reference, Translation} from './data/model';
 import {chapterIndex, isEqual} from './data/model';
 
 const RECENT_COUNT = 10;
@@ -15,6 +15,9 @@ export type State = {|
   +recents: Array<Reference>,
   +preferences: Preferences,
   +toasts: Array<Toast>,
+  +downloads: {
+    +[Translation]: Set<Reference>,
+  },
 |};
 
 export const DEFAULT = {
@@ -27,6 +30,7 @@ export const DEFAULT = {
     translation: 'kjv',
   },
   toasts: [],
+  downloads: {},
 };
 
 const updatedRecents =
@@ -97,6 +101,13 @@ export default (state: State = DEFAULT, action: Action) => {
         ...state,
         preferences: {...state.preferences, hasConfirmedFocusMode: true},
       };
+    case 'set-download':
+      const downloads = {...state.downloads};
+      if (action.download == null)
+        delete downloads[action.translation];
+      else
+        downloads[action.translation] = action.download;
+      return {...state, downloads};
     default:
       (action: empty); // eslint-disable-line
       return state;

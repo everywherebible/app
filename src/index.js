@@ -15,6 +15,7 @@ import App from './ui/app';
 import {READ_PATH_RE} from './ui/nav';
 import './ui/normalize.css';
 import './ui/index.css';
+import download from './db/download';
 
 const store = createStore(reducer, DEFAULT);
 const history = createHistory();

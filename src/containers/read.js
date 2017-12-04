@@ -7,7 +7,8 @@ import {withRouter} from 'react-router-dom';
 import debounce from 'lodash.debounce';
 
 import {enableFocusMode, addToast, confirmFocusMode} from '../actions';
-import type {Action, Translation} from '../actions';
+import type {Action} from '../actions';
+import type {Translation} from '../data/model';
 import {
   chaptersBefore,
   locationToReference,

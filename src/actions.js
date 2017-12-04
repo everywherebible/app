@@ -1,8 +1,6 @@
 // @flow
 
-import type {Reference} from './data/model';
-
-export type Translation = 'kjv' | 'esv';
+import type {Reference, Translation} from './data/model';
 
 export type SetChapterText = {|
   +type: 'set-chapter-text',
@@ -85,6 +83,17 @@ export type ConfirmFocusMode = {|+type: 'confirm-focus-mode'|};
 export const confirmFocusMode = (): ConfirmFocusMode =>
   ({type: 'confirm-focus-mode'});
 
+export type SetDownload = {|
+  +type: 'set-download',
+  +translation: Translation,
+  +download: Set<Reference> | null,
+|};
+
+export const setDownload = (
+    translation: Translation,
+    download: Set<Reference> | null): SetDownload =>
+  ({type: 'set-download', translation, download})
+
 export type Action =
     SetChapterText
   | AddRecent
@@ -93,4 +102,5 @@ export type Action =
   | EnableNightMode
   | SetPreferences
   | AddToast
-  | ConfirmFocusMode;
+  | ConfirmFocusMode
+  | SetDownload;

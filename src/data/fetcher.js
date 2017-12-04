@@ -1,10 +1,9 @@
 // @flow
 import type {Store} from 'redux';
 
-import type {Translation} from '../actions';
 import {setChapterText} from '../actions';
 import {FROM_SERVICE_WORKER_HEADER} from '../constants';
-import type {Reference} from './model';
+import type {Reference, Translation} from './model';
 import {chapterIndex, before, after, CHAPTER_COUNT} from './model';
 import type {State} from '../reducer';
 import transform from './transform';
@@ -56,7 +55,11 @@ export const esvLookup = (url: URL): Promise<EsvApiResponse> => {
   });
 };
 
-const fetchChapter = (translation: Translation, reference: Reference):
+export const chapterUrl = (translation: Translation, reference: Reference):
+    URL =>
+  translation === 'kjv'? kjvChapterUrl(reference) : esvChapterUrl(reference);
+
+export const fetchChapter = (translation: Translation, reference: Reference):
     Promise<string> =>
   translation === 'kjv'?
     fetchOrThrow(kjvChapterUrl(reference))
