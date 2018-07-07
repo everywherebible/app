@@ -30,8 +30,17 @@ fi
 
 msg="master@`git log --pretty=oneline -n 1 --abbrev-commit`"
 
-# deploying to the old esvbible.github.io repo because it's cheap static site
-# hosting.
+# this rube goldberg machine:
+#
+# 1. clones a github repo
+# 2. checks out it's github pages branch (master in this case)
+# 3. replaces everything in the base of that repo with the ./build
+#    directory
+# 4. uses git to tell us if there's anything new, and if so pushes to
+#    deploy
+#
+# we're using the old esvbible.github.io repo. this wierd, but we're using it because
+# it's cheap static site hosting.
 git clone \
   -b master \
   --single-branch \
@@ -58,6 +67,8 @@ git push
 
 sleep 10 # give gh-pages a bit to build
 
+# since this is fronted by cloudflare for the free https and fast cdn, purge
+# the cdn cache
 curl \
   -v \
   -X DELETE \
