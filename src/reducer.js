@@ -106,7 +106,7 @@ export default (state: State = DEFAULT, action: Action) => {
       if (action.download == null)
         delete downloads[action.translation];
       else
-        downloads[action.translation] = action.download;
+        downloads[action.translation] = new Set(action.download);
       return {...state, downloads};
     default:
       (action: empty); // eslint-disable-line

@@ -193,6 +193,10 @@ export default class KeyValStore<K: string | number, V> {
     return this.transact('readwrite', store => store.put(value, key));
   }
 
+  delete(key: K): Promise<void> {
+    return this.transact('readwrite', store => store.delete(key));
+  }
+
   all(): Promise<Array<{key: K, value: V}>> {
     const entries = [];
     return this.transact('readonly', store => {

@@ -9,13 +9,13 @@ import {updateStoreWithPassageText} from './data/fetcher';
 import preferenceTracker,
   {populateStoreWithPreferences} from './data/preferences';
 import recentReferenceTracker from './data/recent-reference-tracker';
+import {downloadTracker} from './db/download';
 import reducer, {DEFAULT} from './reducer';
 import registerServiceWorker from './service-worker/register';
 import App from './ui/app';
 import {READ_PATH_RE} from './ui/nav';
 import './ui/normalize.css';
 import './ui/index.css';
-import download from './db/download';
 
 const store = createStore(reducer, DEFAULT);
 const history = createHistory();
@@ -42,4 +42,11 @@ populateStoreWithPreferences(store.dispatch).then(preferences => {
 });
 
 recentReferenceTracker(store);
+downloadTracker(store);
+let downloadKjv = store.getState().downloads.kjv;
+store.subscribe(() => {
+  if (!store.getState().downloads.kjv && downloadKjv)
+    debugger;
+  downloadKjv = store.getState().downloads.kjv;
+});
 registerServiceWorker();

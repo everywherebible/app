@@ -40,7 +40,7 @@ const esvChapterUrl = (reference: Reference): URL => {
 };
 
 const kjvChapterUrl = (reference: Reference): URL => {
-  const book = reference.book.toLowerCase().replace(/ /g, '-');
+  const book = reference.book.toLowerCase().replace(/ /g, '-').replace(/psalm$/, 'psalms');
   return new URL(`/api/v1/kjv/${book}/${reference.chapter}.html`, KJV_BASE);
 };
 

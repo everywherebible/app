@@ -44,9 +44,9 @@ const dispatchToProps = (dispatch: Action => any): DispatchProps =>
 export default ({match: {path}}: {match: Match}) =>
   <div className="fit">
     <Switch>
-      <Route path={`${path}`}
-        component={connect(stateToProps, dispatchToProps)(Settings)}/>
       <Route path={`${path}/download`}
         component={connect(stateToProps, dispatchToProps)(Download)}/>
+      <Route path={`${path}`}
+        component={connect(stateToProps, dispatchToProps)(Settings)}/>
     </Switch>
   </div>;

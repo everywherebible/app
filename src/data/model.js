@@ -1,6 +1,8 @@
 // @flow
 
-export type Translation = 'kjv' | 'esv';
+const _translations = {'kjv': 1, 'esv': 1};
+export type Translation = $Keys<typeof _translations>;
+export const translations: Array<Translation> = Object.keys(_translations);
 
 export const chaptersBefore = {
   Genesis: 0,
@@ -148,7 +150,8 @@ export const pathStringToReference = (referenceString: string): Reference => {
 }
 
 export const apiPathToReference = (pathname: string): Reference => {
-  const [,,,, dashedBook, chapterDotHtml] = pathname.split('/');
+  let [,,,, dashedBook, chapterDotHtml] = pathname.split('/');
+  dashedBook = dashedBook.replace('psalms', 'psalm');
   const book = books
     .filter(b => b.toLowerCase().replace(/ /g, '-') === dashedBook)[0];
   const chapter = parseInt(chapterDotHtml.split('.')[0], 10);
