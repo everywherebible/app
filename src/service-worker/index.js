@@ -76,7 +76,7 @@ self.addEventListener('fetch', event => {
 
   const fromDb: Promise<string> = isEsv? fromEsvDb(url) : fromKjvDb(url);
 
-  return fromDb
+  event.respondWith(fromDb
     .then(text => {
       if (isEsv) {
         const esvApiJson: EsvApiJson = {passages: [text]};
@@ -111,5 +111,5 @@ self.addEventListener('fetch', event => {
           });
 
       return request;
-    });
+    }));
 });
