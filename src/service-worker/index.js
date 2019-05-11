@@ -19,14 +19,10 @@ import {
 import transform from '../data/transform';
 import {ESV_BASE, fetchOrThrow, esvLookup} from '../data/fetcher';
 import type {EsvApiJson} from '../data/fetcher';
+import log from '../log';
 
 const isPassageLookup = (url: URL): boolean =>
   ESV_BASE.hostname === url.hostname || /^\/api/.test(url.pathname);
-
-const log = (s, f) =>
-  process.env.NODE_ENV === 'development'?
-    console.log(`${f != null? '%c' : ''}${s}`, f) :
-    null;
 
 const logStorage = (url, reference, index) =>
   log(`Storing ${url.toString()} with reference ${JSON.stringify(reference)} as ${index}`,
@@ -90,8 +86,6 @@ self.addEventListener('fetch', event => {
       });
     })
     .catch(error => {
-      log(`Serving ${url.pathname}${url.search} from network`,
-          'color: #bd2323; font-size: 0.8em');
       const request: Promise<Response> = isEsv?
         esvLookup(url)
           .then(response => response.json())

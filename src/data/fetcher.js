@@ -2,7 +2,8 @@
 import type {Store} from 'redux';
 
 import {setChapterText} from '../actions';
-import {FROM_SERVICE_WORKER_HEADER} from '../constants';
+import {FROM_DB_HEADER, FROM_SERVICE_WORKER_HEADER} from '../constants';
+import log from '../log';
 import type {Reference} from './model';
 import {chapterIndex, before, after, CHAPTER_COUNT} from './model';
 import type {State} from '../reducer';
@@ -30,6 +31,10 @@ export const fetchOrThrow = (url: string | URL, init?: RequestOptions):
     .then((response: Response): Response => {
       if (!response.ok)
         throw new Error(`${response.url} failed with ${response.status}`);
+      const fromDb = response.headers.get(FROM_DB_HEADER);
+      const fromSw = response.headers.get(FROM_SERVICE_WORKER_HEADER);
+      const source = fromDb? 'from DB' : fromSw? 'from SW' : 'from network';
+      log(`Received ${url.toString()} ${source}`, 'font-size: 0.8em');
       return response;
     });
 
@@ -63,11 +68,11 @@ const fetchChapter = (store: Store, reference: Reference): Promise<string> => {
 
     esvLookup(esvChapterUrl(reference))
       .then(response => {
-        const fromSW = response.headers.get(FROM_SERVICE_WORKER_HEADER);
+        const fromSw = response.headers.get(FROM_SERVICE_WORKER_HEADER);
 
         return (response.json(): Promise<EsvApiJson>)
           .then(obj => obj.passages[0])
-          .then(text => fromSW? text : transform(text));
+          .then(text => fromSw? text : transform(text));
       });
 
   request
