@@ -22,6 +22,4 @@ export default (store: Store) => {
     recents().set('passages', state.recents.map(chapterIndex));
     last = state.recents;
   });
-
-  populateStoreWithRecents(store.dispatch);
 };

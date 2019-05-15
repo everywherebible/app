@@ -12,11 +12,16 @@ import Nav from '../containers/nav';
 import Read from '../containers/read';
 import Settings from '../containers/settings';
 import Toast from '../containers/toast';
+import type {Reference} from '../data/model';
+import {chapterToLocation} from '../data/model';
 import type State from '../reducer';
 
 type Props = {store: Store<State>, history: any};
 
-const RedirectToGenesis1 = () => <Redirect to='/Genesis+1'/>;
+const redirectToLastChapter = (reference: ?Reference) =>
+  () => <Redirect to={reference == null?
+    '/Genesis+1' :
+    chapterToLocation(reference)}/>;
 
 export default ({store, history}: Props) =>
   <Provider store={store}>
@@ -28,7 +33,8 @@ export default ({store, history}: Props) =>
             <Route path='/settings'       component={Settings}/>
             <Route path='/about'          component={About}/>
             <Route path='/:passage' exact component={Read}/>
-            <Route path='/'         exact component={RedirectToGenesis1}/>
+            <Route path='/'         exact component={
+              redirectToLastChapter(store.getState().recents[0])}/>
           </Switch>
         </section>
         <Toast/>

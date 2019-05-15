@@ -19,14 +19,11 @@ export const populateStoreWithPreferences = (dispatch: Action => any):
     Promise<SettablePreferences> =>
   preferences()
     .all()
-    .then(preferences => {
-      const preferencesObject = preferences.reduce(keyValArrayToObject, {});
-      dispatch(setPreferences(preferencesObject));
-      return preferencesObject;
-    });
+    .then(preferences =>
+      dispatch(setPreferences(preferences.reduce(keyValArrayToObject, {}))));
 
-export default (store: Store<State>, initial: SettablePreferences = {}) => {
-  let last = initial;
+export default (store: Store<State>) => {
+  let last = store.getState().preferences;
 
   store.subscribe((state = store.getState()) => {
     if (state.preferences === last) return;
@@ -41,6 +38,4 @@ export default (store: Store<State>, initial: SettablePreferences = {}) => {
 
     last = state.preferences;
   });
-
-  populateStoreWithPreferences(store.dispatch);
 };

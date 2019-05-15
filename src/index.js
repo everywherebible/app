@@ -8,7 +8,8 @@ import {locationToReference} from './data/model';
 import {updateStoreWithPassageText} from './data/fetcher';
 import preferenceTracker,
   {populateStoreWithPreferences} from './data/preferences';
-import recentReferenceTracker from './data/recent-reference-tracker';
+import recentReferenceTracker,
+  {populateStoreWithRecents} from './data/recent-reference-tracker';
 import reducer, {DEFAULT} from './reducer';
 import registerServiceWorker from './service-worker/register';
 import App from './ui/app';
@@ -29,7 +30,10 @@ history.listen((location, action) =>
     updateStoreWithPassageText(store, locationToReference(location)) :
     store.dispatch(enableFocusMode(false)));
 
-populateStoreWithPreferences(store.dispatch).then(preferences => {
+Promise.all([
+  populateStoreWithPreferences(store.dispatch),
+  populateStoreWithRecents(store.dispatch)
+]).then(() => {
   render(
     <App store={store} history={history}/>,
     document.getElementById('root'));
@@ -37,8 +41,8 @@ populateStoreWithPreferences(store.dispatch).then(preferences => {
   if (READ_PATH_RE.exec(window.location.pathname))
     updateStoreWithPassageText(store, locationToReference(window.location));
 
-  preferenceTracker(store, preferences);
+  preferenceTracker(store);
+  recentReferenceTracker(store);
 });
 
-recentReferenceTracker(store);
 registerServiceWorker();
