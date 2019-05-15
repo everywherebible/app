@@ -204,8 +204,10 @@ export const pathStringToReference = (referenceString: string): Reference => {
 
 export const apiPathToReference = (pathname: string): Reference => {
   const [,,,, dashedBook, chapterDotHtml] = pathname.split('/');
-  const book = books
-    .filter(b => b.toLowerCase().replace(/ /g, '-') === dashedBook)[0];
+  const normalizedBook = dashedBook
+    .replace(/-/g, ' ')
+    .replace('psalms', 'psalm');
+  const book = books.filter(b => b.toLowerCase() === normalizedBook)[0];
   const chapter = parseInt(chapterDotHtml.split('.')[0], 10);
 
   if (!book || Number.isNaN(chapter))
