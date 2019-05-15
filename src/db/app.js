@@ -6,7 +6,7 @@ const PREFERENCES_STORE_NAME = 'preferences';
 const RECENTS_STORE_NAME = 'recents';
 export const DB_METADATA = {
   name: 'app',
-  version: 2,
+  version: 3,
   stores: [PREFERENCES_STORE_NAME, RECENTS_STORE_NAME],
 };
 
@@ -37,7 +37,7 @@ type RecentsKeys = $Keys<typeof RECENTS_KEYS>;
 
 export class RecentsStore extends KeyValStore<RecentsKeys, Array<number>> {
   constructor() {
-    super(DB_METADATA, PREFERENCES_STORE_NAME);
+    super(DB_METADATA, RECENTS_STORE_NAME);
   }
 }
 
