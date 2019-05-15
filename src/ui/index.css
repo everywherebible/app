@@ -31,3 +31,8 @@ select {
   background-color: white;
   border-radius: 4px;
 }
+
+/* Hide the ESV "listen" link. */
+h2 small.audio {
+  display: none;
+}
