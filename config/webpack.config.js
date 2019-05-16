@@ -25,6 +25,7 @@ const getClientEnvironment = require('./env');
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin');
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
+const pkg = require('../package.json');
 
 const postcssNormalize = require('postcss-normalize');
 
@@ -482,6 +483,15 @@ module.exports = function(webpackEnv) {
           {
             inject: true,
             template: paths.appHtml,
+            pkg: {
+              name: pkg.name,
+              version: pkg.version,
+              displayName: pkg.displayName,
+              description: pkg.description,
+              author: pkg.author,
+              license: pkg.license
+              homepage: pkg.homepage,
+            },
           },
           isEnvProduction
             ? {
