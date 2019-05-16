@@ -241,6 +241,9 @@ module.exports = function(webpackEnv) {
           },
         }),
       ],
+
+      /* We've only got 1 script and it doesn't get updated enough to worry
+       * about chunking.
       // Automatically split vendor and commons
       // https://twitter.com/wSokra/status/969633336732905474
       // https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366
@@ -251,6 +254,7 @@ module.exports = function(webpackEnv) {
       // Keep the runtime chunk separated to enable long term caching
       // https://twitter.com/wSokra/status/969679223278505985
       runtimeChunk: true,
+      */
     },
     resolve: {
       // This allows you to set a fallback for where Webpack should look for modules.
@@ -489,7 +493,7 @@ module.exports = function(webpackEnv) {
               displayName: pkg.displayName,
               description: pkg.description,
               author: pkg.author,
-              license: pkg.license
+              license: pkg.license,
               homepage: pkg.homepage,
             },
           },
@@ -511,11 +515,13 @@ module.exports = function(webpackEnv) {
             : undefined
         )
       ),
+      /* See note above about chunking.
       // Inlines the webpack runtime script. This script is too small to warrant
       // a network request.
       isEnvProduction &&
         shouldInlineRuntimeChunk &&
         new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/runtime~.+[.]js/]),
+        */
       // Makes some environment variables available in index.html.
       // The public URL is available as %PUBLIC_URL% in index.html, e.g.:
       // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
