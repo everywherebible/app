@@ -1,33 +1,39 @@
-// @flow
+import React from "react";
+import {connect} from "react-redux";
 
-import React from 'react';
-import {connect} from 'react-redux';
-import type {Match} from 'react-router';
-import {Route} from 'react-router-dom';
+import {Route} from "react-router-dom";
 
-import {addRecent} from '../actions';
-import type {Action} from '../actions';
-import type {Reference} from '../data/model';
-import {populateStoreWithRecents} from '../data/recent-reference-tracker';
-import type {State} from '../reducer';
-import ChooseBook from '../ui/choose-book';
-import ChooseChapter from '../ui/choose-chapter';
+import {addRecent} from "../actions";
 
-const stateToProps = ({recents}: State) => ({recents});
+import {populateStoreWithRecents} from "../data/recent-reference-tracker";
 
-const dispatchToProps = (dispatch: Action => any) =>
-  ({
-    addRecent: (reference: Reference) => dispatch(addRecent(reference)),
-    populateStoreWithRecents: () => populateStoreWithRecents(dispatch),
-  });
+import ChooseBook from "../ui/choose-book";
+import ChooseChapter from "../ui/choose-chapter";
 
-type Props = {match: Match};
+const stateToProps = ({recents}) => ({recents});
 
-export default ({match: {path}}: Props) =>
+const dispatchToProps = dispatch => ({
+  addRecent: reference => dispatch(addRecent(reference)),
+  populateStoreWithRecents: () => populateStoreWithRecents(dispatch),
+});
+
+export default ({match: {path}}) => (
   <div className="fit">
-    <Route exact path={`${path}`}
-      component={connect(stateToProps, dispatchToProps)(ChooseBook)}/>
-    <Route exact path={`${path}/:book`}
-      component={connect(stateToProps, dispatchToProps)(ChooseChapter)}/>
-  </div>;
-
+    <Route
+      exact
+      path={`${path}`}
+      component={connect(
+        stateToProps,
+        dispatchToProps
+      )(ChooseBook)}
+    />
+    <Route
+      exact
+      path={`${path}/:book`}
+      component={connect(
+        stateToProps,
+        dispatchToProps
+      )(ChooseChapter)}
+    />
+  </div>
+);

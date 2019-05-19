@@ -1,20 +1,15 @@
-// @flow
+import React, {Component} from "react";
+import {connect} from "react-redux";
 
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
+import "../ui/toast.css";
 
-import type {State, Toast as ToastType} from '../reducer';
-import '../ui/toast.css';
+const stateToProps = ({toasts}) => ({toasts});
 
-type Props = {toasts: Array<ToastType>};
-
-const stateToProps = ({toasts}: State): Props => ({toasts});
-
-export class Toast extends Component<Props> {
+export class Toast extends Component {
   toastElements = [];
 
   fadeOutClasses() {
-    this.toastElements.map(t => t.classList.add('toast-fade-out'));
+    this.toastElements.map(t => t.classList.add("toast-fade-out"));
   }
 
   componentDidMount() {
@@ -29,34 +24,37 @@ export class Toast extends Component<Props> {
     const {toasts} = this.props;
     this.toastElements = [];
 
-    return <div>
-      {toasts
-        .map(toast =>
+    return (
+      <div>
+        {toasts.map(toast => (
           <div
-              ref={t => t && this.toastElements.push(t)}
-              className='toast'
+            ref={t => t && this.toastElements.push(t)}
+            className="toast"
+            style={{
+              position: "absolute",
+              bottom: "4rem",
+              left: 0,
+              right: 0,
+              textAlign: "center",
+              pointerEvents: "none",
+              transition: "opacity 1s ease-out",
+              transitionDelay: "2s",
+            }}
+            key={toast.start}>
+            <div
               style={{
-                position: 'absolute',
-                bottom: '4rem',
-                left: 0,
-                right: 0,
-                textAlign: 'center',
-                pointerEvents: 'none',
-                transition: 'opacity 1s ease-out',
-                transitionDelay: '2s',
-              }}
-              key={toast.start}>
-            <div style={{
-                  backgroundColor: 'black',
-                  color: 'white',
-                  borderRadius: '1rem',
-                  display: 'inline-block',
-                  padding: '.7rem 1rem',
-                }}>
+                backgroundColor: "black",
+                color: "white",
+                borderRadius: "1rem",
+                display: "inline-block",
+                padding: ".7rem 1rem",
+              }}>
               {toast.text}
             </div>
-          </div>)}
-    </div>;
+          </div>
+        ))}
+      </div>
+    );
   }
 }
 

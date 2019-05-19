@@ -1,26 +1,23 @@
-// @flow
-
-import KeyValStore from '../key-val-store';
+import KeyValStore from "../key-val-store";
 
 let _instance;
 
-const STORE_NAME = 'chapters';
+const STORE_NAME = "chapters";
 
 const DB_METADATA = {
-  name: 'bible-kjv',
+  name: "bible-kjv",
   version: 2,
   stores: [STORE_NAME],
 };
 
-export class KjvBibleStore extends KeyValStore<number, string> {
+export class KjvBibleStore extends KeyValStore {
   constructor() {
     super(DB_METADATA, STORE_NAME);
   }
 }
 
-export default (): KjvBibleStore => {
-  if (_instance == null)
-    _instance = new KjvBibleStore();
+export default () => {
+  if (_instance == null) _instance = new KjvBibleStore();
 
   return _instance;
-}
+};

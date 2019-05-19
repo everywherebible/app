@@ -1,5 +1,3 @@
-// @flow
-
 export const chapterCounts = {
   Genesis: 50,
   Exodus: 40,
@@ -9,12 +7,12 @@ export const chapterCounts = {
   Joshua: 24,
   Judges: 21,
   Ruth: 4,
-  '1 Samuel': 31,
-  '2 Samuel': 24,
-  '1 Kings': 22,
-  '2 Kings': 25,
-  '1 Chronicles': 29,
-  '2 Chronicles': 36,
+  "1 Samuel": 31,
+  "2 Samuel": 24,
+  "1 Kings": 22,
+  "2 Kings": 25,
+  "1 Chronicles": 29,
+  "2 Chronicles": 36,
   Ezra: 10,
   Nehemiah: 13,
   Esther: 10,
@@ -22,7 +20,7 @@ export const chapterCounts = {
   Psalm: 150,
   Proverbs: 31,
   Ecclesiastes: 12,
-  'Song of Solomon': 8,
+  "Song of Solomon": 8,
   Isaiah: 66,
   Jeremiah: 52,
   Lamentations: 5,
@@ -46,25 +44,25 @@ export const chapterCounts = {
   John: 21,
   Acts: 28,
   Romans: 16,
-  '1 Corinthians': 16,
-  '2 Corinthians': 13,
+  "1 Corinthians": 16,
+  "2 Corinthians": 13,
   Galatians: 6,
   Ephesians: 6,
   Philippians: 4,
   Colossians: 4,
-  '1 Thessalonians': 5,
-  '2 Thessalonians': 3,
-  '1 Timothy': 6,
-  '2 Timothy': 4,
+  "1 Thessalonians": 5,
+  "2 Thessalonians": 3,
+  "1 Timothy": 6,
+  "2 Timothy": 4,
   Titus: 3,
   Philemon: 1,
   Hebrews: 13,
   James: 5,
-  '1 Peter': 5,
-  '2 Peter': 3,
-  '1 John': 5,
-  '2 John': 1,
-  '3 John': 1,
+  "1 Peter": 5,
+  "2 Peter": 3,
+  "1 John": 5,
+  "2 John": 1,
+  "3 John": 1,
   Jude: 1,
   Revelation: 22,
 };
@@ -78,12 +76,12 @@ const chaptersBefore = {
   Joshua: 187,
   Judges: 211,
   Ruth: 232,
-  '1 Samuel': 236,
-  '2 Samuel': 267,
-  '1 Kings': 291,
-  '2 Kings': 313,
-  '1 Chronicles': 338,
-  '2 Chronicles': 367,
+  "1 Samuel": 236,
+  "2 Samuel": 267,
+  "1 Kings": 291,
+  "2 Kings": 313,
+  "1 Chronicles": 338,
+  "2 Chronicles": 367,
   Ezra: 403,
   Nehemiah: 413,
   Esther: 426,
@@ -91,7 +89,7 @@ const chaptersBefore = {
   Psalm: 478,
   Proverbs: 628,
   Ecclesiastes: 659,
-  'Song of Solomon': 671,
+  "Song of Solomon": 671,
   Isaiah: 679,
   Jeremiah: 745,
   Lamentations: 797,
@@ -115,121 +113,106 @@ const chaptersBefore = {
   John: 997,
   Acts: 1018,
   Romans: 1046,
-  '1 Corinthians': 1062,
-  '2 Corinthians': 1078,
+  "1 Corinthians": 1062,
+  "2 Corinthians": 1078,
   Galatians: 1091,
   Ephesians: 1097,
   Philippians: 1103,
   Colossians: 1107,
-  '1 Thessalonians': 1111,
-  '2 Thessalonians': 1116,
-  '1 Timothy': 1119,
-  '2 Timothy': 1125,
+  "1 Thessalonians": 1111,
+  "2 Thessalonians": 1116,
+  "1 Timothy": 1119,
+  "2 Timothy": 1125,
   Titus: 1129,
   Philemon: 1132,
   Hebrews: 1133,
   James: 1146,
-  '1 Peter': 1151,
-  '2 Peter': 1156,
-  '1 John': 1159,
-  '2 John': 1164,
-  '3 John': 1165,
+  "1 Peter": 1151,
+  "2 Peter": 1156,
+  "1 John": 1159,
+  "2 John": 1164,
+  "3 John": 1165,
   Jude: 1166,
-  Revelation: 1167
+  Revelation: 1167,
 };
 
 export const CHAPTER_COUNT = 1189;
 
-type Book = $Keys<typeof chapterCounts>;
+export const books = Object.getOwnPropertyNames(chaptersBefore);
 
-export const books: Array<Book> = Object.getOwnPropertyNames(chaptersBefore);
-
-export type Reference = {|
-  +book: Book,
-  +chapter: number,
-  +verse: number
-|};
-
-export type Chapter = {|
-  +reference: Reference,
-  +text: string
-|};
-
-export const chapterIndex = (reference: Reference): number => {
+export const chapterIndex = reference => {
   return chaptersBefore[reference.book] + reference.chapter - 1;
-}
+};
 
-export const reference = (index: number): Reference => {
+export const reference = index => {
   let book;
 
   for (let current of books)
-    if (chaptersBefore[current] <= index)
-      book = current
-    else
-      break;
+    if (chaptersBefore[current] <= index) book = current;
+    else break;
 
-  if (book == null)
-    throw new Error('reference index is out of range');
+  if (book == null) throw new Error("reference index is out of range");
 
   return {book, chapter: index - chaptersBefore[book] + 1, verse: 1};
-}
+};
 
-export const before = (ref: Reference): Reference => {
+export const before = ref => {
   const index = chapterIndex(ref);
   const indexBefore =
-    (((index - 1) % CHAPTER_COUNT) + CHAPTER_COUNT) % CHAPTER_COUNT
+    (((index - 1) % CHAPTER_COUNT) + CHAPTER_COUNT) % CHAPTER_COUNT;
   return reference(indexBefore);
-}
+};
 
-export const after = (ref: Reference): Reference =>
-  reference((chapterIndex(ref) + 1) % CHAPTER_COUNT);
+export const after = ref => reference((chapterIndex(ref) + 1) % CHAPTER_COUNT);
 
-export const pathStringToReference = (referenceString: string): Reference => {
+export const pathStringToReference = referenceString => {
   let [bookNumber, book, chapterAndVerse] = referenceString.split(/\s/);
 
   if (!/^\d+$/.test(bookNumber))
-    [book, chapterAndVerse, bookNumber] = [bookNumber, book, ''];
+    [book, chapterAndVerse, bookNumber] = [bookNumber, book, ""];
 
-  const [chapter, verse] = chapterAndVerse != null?
-    chapterAndVerse.split(':') : [1, 1];
+  const [chapter, verse] =
+    chapterAndVerse != null ? chapterAndVerse.split(":") : [1, 1];
 
   return {
-    book: (((bookNumber? bookNumber + ' ' : '') +
-          book[0].toUpperCase() +
-          book.slice(1).toLowerCase()): any),
+    book:
+      (bookNumber ? bookNumber + " " : "") +
+      book[0].toUpperCase() +
+      book.slice(1).toLowerCase(),
     chapter: parseInt(chapter, 10),
-    verse: verse == null? 1 : parseInt(verse, 10)
+    verse: verse == null ? 1 : parseInt(verse, 10),
   };
-}
+};
 
-export const apiPathToReference = (pathname: string): Reference => {
-  const [,,,, dashedBook, chapterDotHtml] = pathname.split('/');
+export const apiPathToReference = pathname => {
+  const [, , , , dashedBook, chapterDotHtml] = pathname.split("/");
   const normalizedBook = dashedBook
-    .replace(/-/g, ' ')
-    .replace('psalms', 'psalm');
+    .replace(/-/g, " ")
+    .replace("psalms", "psalm");
   const book = books.filter(b => b.toLowerCase() === normalizedBook)[0];
-  const chapter = parseInt(chapterDotHtml.split('.')[0], 10);
+  const chapter = parseInt(chapterDotHtml.split(".")[0], 10);
 
   if (!book || Number.isNaN(chapter))
     throw new Error(`Could not convert ${pathname} to a reference.`);
 
   return {book, chapter, verse: 1};
-}
+};
 
-export const locationToReference = (location: Location): Reference =>
-  pathStringToReference(decodeURI(location.pathname)
-    .slice(1)
-    .replace(/\++/g, ' ')
-    .replace(/^\s+/, '')
-    .replace(/\s+$/, ''));
+export const locationToReference = location =>
+  pathStringToReference(
+    decodeURI(location.pathname)
+      .slice(1)
+      .replace(/\++/g, " ")
+      .replace(/^\s+/, "")
+      .replace(/\s+$/, "")
+  );
 
-export const chapterToLocation = ({book, chapter}: Reference): string =>
-  `/${book}+${chapter}`;
+export const chapterToLocation = ({book, chapter}) => `/${book}+${chapter}`;
 
-export const referenceToLocation = (reference: Reference): string =>
+export const referenceToLocation = reference =>
   `/${reference.book}+${reference.chapter}:${reference.verse}`;
 
-export const isEqual = (a: Reference, b: Reference): boolean =>
+export const isEqual = (a, b) =>
   a.book === b.book && a.chapter === b.chapter && a.verse === b.verse;
 
 /** Convert a Reference to the element ID the ESV API puts in their markup.
@@ -244,11 +227,11 @@ export const isEqual = (a: Reference, b: Reference): boolean =>
  *
  * This is the inverse of verseNumIdToReference.
  */
-export const referenceToVerseNumId = (r: Reference): string => {
+export const referenceToVerseNumId = r => {
   const bookIdx = books.indexOf(r.book) + 1;
-  const book = bookIdx.toLocaleString('en', {minimumIntegerDigits: 2});
-  const chapter = r.chapter.toLocaleString('en', {minimumIntegerDigits: 3});
-  const verse = r.verse.toLocaleString('en', {minimumIntegerDigits: 3});
+  const book = bookIdx.toLocaleString("en", {minimumIntegerDigits: 2});
+  const chapter = r.chapter.toLocaleString("en", {minimumIntegerDigits: 3});
+  const verse = r.verse.toLocaleString("en", {minimumIntegerDigits: 3});
 
   return `v${book}${chapter}${verse}-1`;
 };
@@ -269,11 +252,10 @@ export const referenceToVerseNumId = (r: Reference): string => {
  *
  * This is the inverse of referenceToVerseNumId.
  */
-export const verseNumIdToReference = (id: string): Reference => {
+export const verseNumIdToReference = id => {
   const parsed = id.match(/^vt?(\d\d)(\d\d\d)(\d\d\d)/);
 
-  if (parsed == null)
-    throw new Error(`cannot convert ${id} to reference`);
+  if (parsed == null) throw new Error(`cannot convert ${id} to reference`);
 
   const [, book, chapter, verse] = parsed;
 
@@ -283,5 +265,3 @@ export const verseNumIdToReference = (id: string): Reference => {
     verse: parseInt(verse, 10),
   };
 };
-
-

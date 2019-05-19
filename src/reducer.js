@@ -1,65 +1,65 @@
-// @flow
-
-import type {Action, Preferences, Translation} from './actions';
-import type {Reference} from './data/model';
-import {chapterIndex, isEqual} from './data/model';
+import {chapterIndex, isEqual} from "./data/model";
 
 const RECENT_COUNT = 10;
 
-export type Toast = {|start: number, text: string|}; // TODO: find a better home
-
-export type State = {|
-  +chapters: {
-    +[Translation]: {[number]: string},
-  },
-  +recents: Array<Reference>,
-  +preferences: Preferences,
-  +toasts: Array<Toast>,
-|};
+// TODO: find a better home
 
 export const DEFAULT = {
-  chapters: {kjv: {}, esv: {}},
-  recents: [],
+  chapters: {
+    kjv: {
+      /* Map<Number,String> */
+    },
+    esv: {
+      /* Map<Number,String> */
+    },
+  },
+  recents: [
+    /* Array<Reference> */
+  ],
   preferences: {
     enableFocusMode: false,
     enableNightMode: false,
     hasConfirmedFocusMode: false,
-    translation: 'kjv',
+    translation: "kjv",
   },
-  toasts: [],
+  toasts: [
+    /* Array<{start: Number, text: String}> */
+  ],
 };
 
-const updatedRecents =
-  (reference: Reference, currentRecents: Array<Reference>) => {
-    const withoutNewReference =
-      currentRecents.filter(current => !isEqual(current, reference));
+const updatedRecents = (reference, currentRecents) => {
+  const withoutNewReference = currentRecents.filter(
+    current => !isEqual(current, reference)
+  );
 
-    return withoutNewReference.length >= RECENT_COUNT?
-      withoutNewReference.slice(0, RECENT_COUNT) : withoutNewReference;
-  };
+  return withoutNewReference.length >= RECENT_COUNT
+    ? withoutNewReference.slice(0, RECENT_COUNT)
+    : withoutNewReference;
+};
 
-export default (state: State = DEFAULT, action: Action) => {
+export default (state = DEFAULT, action) => {
   switch (action.type) {
-    case 'set-chapter-text':
+    case "set-chapter-text":
       return {
         ...state,
-        chapters: action.translation === 'kjv'?
-          {
-            kjv: {
-              ...state.chapters.kjv,
-              [chapterIndex(action.reference)]: action.text,
-            },
-            esv: state.chapters.esv
-          } :
-          {
-            kjv: state.chapters.kjv,
-            esv: {
-              ...state.chapters.esv,
-              [chapterIndex(action.reference)]: action.text,
-            },
-          },
+        chapters:
+          action.translation === "kjv"
+            ? {
+                kjv: {
+                  ...state.chapters.kjv,
+                  [chapterIndex(action.reference)]: action.text,
+                },
+                esv: state.chapters.esv,
+              }
+            : {
+                kjv: state.chapters.kjv,
+                esv: {
+                  ...state.chapters.esv,
+                  [chapterIndex(action.reference)]: action.text,
+                },
+              },
       };
-    case 'add-recent':
+    case "add-recent":
       return {
         ...state,
         recents: [
@@ -67,38 +67,38 @@ export default (state: State = DEFAULT, action: Action) => {
           ...updatedRecents(action.reference, state.recents),
         ],
       };
-    case 'set-recents':
+    case "set-recents":
       return {...state, recents: action.recents};
-    case 'enable-focus-mode':
+    case "enable-focus-mode":
       return {
         ...state,
         preferences: {...state.preferences, enableFocusMode: action.enabled},
       };
-    case 'enable-night-mode':
+    case "enable-night-mode":
       return {
         ...state,
         preferences: {...state.preferences, enableNightMode: action.enabled},
       };
-    case 'set-preferences':
+    case "set-preferences":
       return {
         ...state,
         preferences: {...state.preferences, ...action.preferences},
       };
-    case 'add-toast':
+    case "add-toast":
       return {
         ...state,
         toasts: [
           ...state.toasts.filter(t => Date.now() - t.start < 3000),
           {start: Date.now(), text: action.text},
-        ]
+        ],
       };
-    case 'confirm-focus-mode':
+    case "confirm-focus-mode":
       return {
         ...state,
         preferences: {...state.preferences, hasConfirmedFocusMode: true},
       };
     default:
-      (action: empty); // eslint-disable-line
+      action; // eslint-disable-line
       return state;
   }
 };
