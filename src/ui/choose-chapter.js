@@ -2,7 +2,7 @@ import React from "react";
 import {Link} from "react-router-dom";
 
 import {chapterCounts} from "../data/model";
-import {NAV_HEIGHT} from "./nav";
+import {NAV_HEIGHT_REM} from "./nav";
 
 export default ({
   match: {
@@ -18,7 +18,7 @@ export default ({
         justifyContent: "space-around",
         textAlign: "center",
         overflowY: "scroll",
-        marginBottom: NAV_HEIGHT,
+        marginBottom: `${NAV_HEIGHT_REM}rem`,
       }}>
       {[...Array(chapterCounts[book])].map((_, i) => (
         <Link

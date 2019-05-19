@@ -54,5 +54,13 @@ object {
   height: 2rem;
   line-height: 0;
   padding-left: 0.5rem;
-  border: 0;
+  border: .1rem solid black;
+  transition-property: opacity;
+  transition-duration: .2s;
+}
+
+.night-mode button {
+  color: white;
+  background-color: black;
+  border-color: white;
 }

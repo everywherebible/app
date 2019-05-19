@@ -4,14 +4,12 @@ import "./chapters.css";
 import copyToClipboard from "./copy-to-clipboard";
 import {
   chapterIndex,
-  reference as referenceFromIndex,
   before,
   after,
   referenceToLocation,
   verseNumIdToReference,
 } from "../data/model";
-import {NAV_HEIGHT} from "./nav";
-import PagerView from "./pagerview";
+import {NAV_HEIGHT_REM} from "./nav";
 
 const BREAK_POINT = 700;
 
@@ -81,7 +79,7 @@ class Chapter extends Component {
     ) : (
       <div
         style={{
-          marginBottom: NAV_HEIGHT,
+          marginBottom: `${NAV_HEIGHT_REM * 2}rem`,
           padding: "0 1rem 1rem 1rem",
           lineHeight: "1.4em",
         }}>
@@ -106,6 +104,9 @@ class Chapter extends Component {
   }
 }
 
+const TRANSPARENT = {opacity: 0};
+const VISIBLE = {opacity: 1};
+
 export default ({
   reference,
   chapterCache,
@@ -115,40 +116,32 @@ export default ({
   onClick,
   toast,
   translation,
+  enableFocusMode,
 }) => (
-  <div className="fit">
-    <PagerView
-      index={chapterIndex(reference)}
-      onIndexChange={index => onReferenceChange(referenceFromIndex(index))}
-      onScroll={onScroll || (() => null)}
-      getInitialScroll={getInitialScroll || (() => null)}
-      renderPage={index => (
-        <Chapter
-          reference={referenceFromIndex(index)}
-          onClick={onClick}
-          text={chapterCache[index]}
-          toast={toast}
-          translation={translation}
-        />
-      )}
-    />
-    {window.innerWidth > BREAK_POINT ? (
-      <button
-        type="button"
-        onClick={() => onReferenceChange(before(reference))}
-        className="nav-button"
-        style={{left: "1rem", transform: "rotate(0.5turn)"}}>
-        &#10140;
-      </button>
-    ) : null}
-    {window.innerWidth > BREAK_POINT ? (
-      <button
-        type="button"
-        onClick={() => onReferenceChange(after(reference))}
-        className="nav-button"
-        style={{right: "1rem"}}>
-        &#10140;
-      </button>
-    ) : null}
+  <div>
+    <Chapter
+      reference={reference}
+      onClick={onClick}
+      text={chapterCache[chapterIndex(reference)]}
+      toast={toast}
+      translation={translation}/>
+    <button
+      type="button"
+      onClick={() => onReferenceChange(before(reference))}
+      className="nav-button"
+      style={{
+        ...(enableFocusMode? TRANSPARENT : VISIBLE),
+          left: "1rem",
+          transform: "rotate(0.5turn)"
+      }}>
+      &#10140;
+    </button>
+    <button
+      type="button"
+      onClick={() => onReferenceChange(after(reference))}
+      className="nav-button"
+      style={{...(enableFocusMode? TRANSPARENT : VISIBLE), right: "1rem"}}>
+      &#10140;
+    </button>
   </div>
 );

@@ -71,7 +71,7 @@ const ChaptersWithRouter = withRouter(
   }) => {
     const reference = locationToReference(location);
     return (
-      <div className="fit">
+      <div>
         {chapterCounts[reference.book] ? (
           <Chapters
             reference={reference}
@@ -84,6 +84,7 @@ const ChaptersWithRouter = withRouter(
             getInitialScroll={getInitialScroll}
             toast={toast}
             translation={translation}
+            enableFocusMode={enableFocusMode}
           />
         ) : (
           <ThatsNotInTheBible />

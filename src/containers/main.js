@@ -5,7 +5,7 @@ import {withRouter} from "react-router-dom";
 const stateToProps = ({preferences: {enableNightMode}}) => ({enableNightMode});
 
 const Main = ({enableNightMode, children}) => (
-  <main className={`fit ${enableNightMode ? "night-mode" : ""}`}>
+  <main className={`fit ${enableNightMode ? "night-mode" : ""}`} style={{overflow: 'auto'}}>
     {children}
   </main>
 );
