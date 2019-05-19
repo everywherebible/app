@@ -83,6 +83,8 @@ checkBrowsers(paths.appPath, isInteractive)
         console.log(chalk.green('Compiled successfully.\n'));
       }
 
+      appendServiceWorkerToSwPrecache(stats);
+
       console.log('File sizes after gzip:\n');
       printFileSizesAfterBuild(
         stats,
@@ -189,3 +191,17 @@ function copyPublicFolder() {
     filter: file => file !== paths.appHtml,
   });
 }
+
+function appendServiceWorkerToSwPrecache(stats) {
+  const serviceWorker = stats
+    .toJson()
+    .assets
+    .filter(asset => /static\/.*service-worker.*js$/.test(asset.name))[0];
+
+  if (serviceWorker == null)
+    throw new Error('expected to find service-worker chunk in assets');
+
+  fs.appendFileSync(path.join(paths.appBuild, 'service-worker.js'),
+      fs.readFileSync(path.join(paths.appBuild, serviceWorker.name)));
+};
+
