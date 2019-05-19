@@ -1,4 +1,4 @@
-import createHistory from 'history/createBrowserHistory';
+import {createBrowserHistory} from 'history';
 import React from 'react';
 import {render} from 'react-dom';
 import {createStore} from 'redux';
@@ -18,7 +18,7 @@ import './ui/normalize.css';
 import './ui/index.css';
 
 const store = createStore(reducer, DEFAULT);
-const history = createHistory();
+const history = createBrowserHistory();
 
 if (sessionStorage.redirect) {
   history.replace(sessionStorage.redirect);

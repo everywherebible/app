@@ -1,9 +1,10 @@
 'use strict';
 
 const errorOverlayMiddleware = require('react-dev-utils/errorOverlayMiddleware');
-const noopServiceWorkerMiddleware = require('react-dev-utils/noopServiceWorkerMiddleware');
-const config = require('./webpack.config.dev');
+const evalSourceMapMiddleware = require('react-dev-utils/evalSourceMapMiddleware');
+const ignoredFiles = require('react-dev-utils/ignoredFiles');
 const paths = require('./paths');
+const fs = require('fs');
 
 const protocol = process.env.HTTPS === 'true' ? 'https' : 'http';
 const host = process.env.HOST || '0.0.0.0';
@@ -16,8 +17,8 @@ module.exports = function(proxy, allowedHost) {
     // https://medium.com/webpack/webpack-dev-server-middleware-security-issues-1489d950874a
     // However, it made several existing use cases such as development in cloud
     // environment or subdomains in development significantly more complicated:
-    // https://github.com/facebookincubator/create-react-app/issues/2271
-    // https://github.com/facebookincubator/create-react-app/issues/2233
+    // https://github.com/facebook/create-react-app/issues/2271
+    // https://github.com/facebook/create-react-app/issues/2233
     // While we're investigating better solutions, for now we will take a
     // compromise. Since our WDS configuration only serves files in the `public`
     // folder we won't consider accessing them a vulnerability. However, if you
@@ -50,42 +51,55 @@ module.exports = function(proxy, allowedHost) {
     contentBase: paths.appPublic,
     // By default files from `contentBase` will not trigger a page reload.
     watchContentBase: true,
+    /* since hmr is only for css and our load times are good, disable it to
+     * avoid issues (like when it tries to do it from service-worker and chokes
+     * on the lack of `window`
     // Enable hot reloading server. It will provide /sockjs-node/ endpoint
     // for the WebpackDevServer client so it can learn when the files were
     // updated. The WebpackDevServer client is included as an entry point
     // in the Webpack development configuration. Note that only changes
     // to CSS are currently hot reloaded. JS changes will refresh the browser.
-    hot: true,
+    // hot: true,
+    */
     // It is important to tell WebpackDevServer to use the same "root" path
     // as we specified in the config. In development, we always serve from /.
-    publicPath: config.output.publicPath,
+    publicPath: '/',
     // WebpackDevServer is noisy by default so we emit custom message instead
-    // by listening to the compiler events with `compiler.plugin` calls above.
+    // by listening to the compiler events with `compiler.hooks[...].tap` calls above.
     quiet: true,
     // Reportedly, this avoids CPU overload on some systems.
-    // https://github.com/facebookincubator/create-react-app/issues/293
+    // https://github.com/facebook/create-react-app/issues/293
+    // src/node_modules is not ignored to support absolute imports
+    // https://github.com/facebook/create-react-app/issues/1065
     watchOptions: {
-      ignored: /node_modules/,
+      ignored: ignoredFiles(paths.appSrc),
     },
     // Enable HTTPS if the HTTPS environment variable is set to 'true'
     https: protocol === 'https',
-    host: host,
+    host,
     overlay: false,
     historyApiFallback: {
       // Paths with dots should still use the history fallback.
-      // See https://github.com/facebookincubator/create-react-app/issues/387.
+      // See https://github.com/facebook/create-react-app/issues/387.
       disableDotRule: true,
     },
     public: allowedHost,
     proxy,
-    setup(app) {
+    before(app, server) {
+      if (fs.existsSync(paths.proxySetup)) {
+        // This registers user provided middleware for proxy reasons
+        require(paths.proxySetup)(app);
+      }
+
+      // This lets us fetch source contents from webpack for the error overlay
+      app.use(evalSourceMapMiddleware(server));
       // This lets us open files from the runtime error overlay.
       app.use(errorOverlayMiddleware());
 
-      // Serve the service worker at the root like it will be in production so
-      // that it can intercept any fetch requests.
+      // redirect to subset of the service worker that doesn't cache static
+      // files, but intercepts XHR's and deals with the database.
       app.use((req, res, next) => {
-        if (/service-worker.js$/.test(req.url))
+        if (/^\/service-worker.js$/.test(req.url))
           req.url = '/static/js/service-worker.js';
         next();
       });
